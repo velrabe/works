@@ -169,7 +169,7 @@
     var currentScrollY = window.scrollY;
     var delta = currentScrollY - lastScrollY;
     lastScrollY = currentScrollY;
-    angle += delta * 1.5;
+    angle += delta * 0.55;
     icon.style.transform = "rotate(" + angle + "deg)";
   }
 

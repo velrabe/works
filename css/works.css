@@ -16,6 +16,7 @@
     sans-serif;
   --works-carousel-slide: 78%;
   --works-carousel-gap: 0.75rem;
+  --works-telegram: #27a7e7;
 }
 
 html {
@@ -1406,17 +1407,17 @@ html.works-modal-open {
   justify-content: center;
   width: 3.25rem;
   height: 3.25rem;
-  border: 0.0625rem solid var(--works-border-strong);
+  border: 0.0625rem solid var(--works-telegram);
   border-radius: 999rem;
-  background-color: var(--works-text);
+  background-color: var(--works-telegram);
   box-shadow: var(--works-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .works-fab__link:hover .works-fab__button,
 .works-fab__link:focus-visible .works-fab__button {
-  box-shadow: 0 0.0625rem 0.1875rem rgba(20, 20, 20, 0.05),
-    0 1rem 2.5rem rgba(20, 20, 20, 0.12);
+  box-shadow: 0 0.0625rem 0.1875rem rgba(39, 167, 231, 0.2),
+    0 1rem 2.5rem rgba(39, 167, 231, 0.35);
 }
 
 .works-fab__icon-wrap {
@@ -1431,6 +1432,18 @@ html.works-modal-open {
   display: block;
   width: 1.5rem;
   height: 1.5rem;
+}
+
+@media (min-width: 48rem) {
+  .works-fab__button {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .works-fab__icon {
+    width: 2.125rem;
+    height: 2.125rem;
+  }
 }
 
 @media (min-width: 40rem) {
