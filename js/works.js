@@ -1,5 +1,5 @@
 (function () {
-  var cards = document.querySelectorAll("[data-reveal], .works-page__service-card");
+  var cards = document.querySelectorAll("[data-reveal]");
   if (cards.length) {
     var observer = new IntersectionObserver(
       function (entries) {
