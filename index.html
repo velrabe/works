@@ -1142,6 +1142,30 @@ Email: ____________
       </div>
     </div>
 
+    <div class="works-lightbox" id="works-lightbox" data-lightbox hidden>
+      <div class="works-lightbox__backdrop" data-lightbox-close></div>
+      <div class="works-lightbox__shell" role="dialog" aria-modal="true" aria-label="Просмотр изображения">
+        <button class="works-lightbox__close" type="button" data-lightbox-close aria-label="Закрыть">
+          <span class="works-lightbox__close-icon">×</span>
+        </button>
+        <div class="works-lightbox__stage-wrap">
+          <button class="works-lightbox__nav works-lightbox__nav--prev" type="button" data-lightbox-prev aria-label="Предыдущее изображение"></button>
+          <div class="works-lightbox__stage">
+            <img class="works-lightbox__img" data-lightbox-img alt="" />
+          </div>
+          <button class="works-lightbox__nav works-lightbox__nav--next" type="button" data-lightbox-next aria-label="Следующее изображение"></button>
+        </div>
+        <div class="works-lightbox__meta">
+          <div class="works-lightbox__counter-wrap">
+            <span class="works-lightbox__counter" data-lightbox-counter></span>
+          </div>
+          <div class="works-lightbox__caption-wrap">
+            <span class="works-lightbox__caption" data-lightbox-caption></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="works-fab">
       <a
         class="works-fab__link"
