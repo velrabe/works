@@ -1,0 +1,25 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  background-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  line-height: 2rem;
+  background-color: transparent;
+}
