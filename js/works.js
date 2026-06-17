@@ -157,3 +157,21 @@
     });
   }
 })();
+
+(function () {
+  var icon = document.querySelector("[data-fab-icon]");
+  if (!icon) return;
+
+  var angle = 0;
+  var lastScrollY = window.scrollY;
+
+  function onScroll() {
+    var currentScrollY = window.scrollY;
+    var delta = currentScrollY - lastScrollY;
+    lastScrollY = currentScrollY;
+    angle += delta * 1.5;
+    icon.style.transform = "rotate(" + angle + "deg)";
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+})();
