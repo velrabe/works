@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f7f5" />
+    <meta name="description" content="Тестовая страница оплаты услуг дизайна." />
+    <title>Тестовая оплата — Валерий Мороз</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../css/reset.css" />
+    <link rel="stylesheet" href="../../css/works.css" />
+    <link rel="stylesheet" href="../../css/checkout.css" />
+  </head>
+  <body>
+    <div class="page-root">
+      <div class="checkout-page">
+        <div class="checkout-page__shell">
+          <div class="checkout-page__back-wrap">
+            <a class="checkout-page__back" href="../../index.html">
+              <div class="checkout-page__back-text-wrap">
+                <span class="checkout-page__back-text">← На сайт</span>
+              </div>
+            </a>
+          </div>
+
+          <div class="checkout-page__card">
+            <div class="checkout-page__head">
+              <div class="checkout-page__badge-wrap">
+                <span class="checkout-page__badge">Тестовый заказ</span>
+              </div>
+              <div class="checkout-page__title-wrap">
+                <h1 class="checkout-page__title">Оплата услуги</h1>
+              </div>
+            </div>
+
+            <div class="checkout-page__body">
+              <div class="checkout-page__row">
+                <div class="checkout-page__label-wrap">
+                  <span class="checkout-page__label">Заказ</span>
+                </div>
+                <div class="checkout-page__value-wrap">
+                  <span class="checkout-page__value">№TEST-001</span>
+                </div>
+              </div>
+              <div class="checkout-page__row">
+                <div class="checkout-page__label-wrap">
+                  <span class="checkout-page__label">Услуга</span>
+                </div>
+                <div class="checkout-page__value-wrap">
+                  <span class="checkout-page__value">Разработка фирменного стиля</span>
+                </div>
+              </div>
+              <div class="checkout-page__row">
+                <div class="checkout-page__label-wrap">
+                  <span class="checkout-page__label">Стоимость</span>
+                </div>
+                <div class="checkout-page__value-wrap">
+                  <span class="checkout-page__value checkout-page__value--price">100 ₽</span>
+                </div>
+              </div>
+              <div class="checkout-page__row">
+                <div class="checkout-page__label-wrap">
+                  <span class="checkout-page__label">Статус</span>
+                </div>
+                <div class="checkout-page__value-wrap">
+                  <span class="checkout-page__value checkout-page__value--status">Ожидает оплаты</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="checkout-page__foot">
+              <button class="checkout-page__pay" type="button" data-checkout-pay>
+                <span class="checkout-page__pay-text">Оплатить</span>
+              </button>
+              <div class="checkout-page__note-wrap">
+                <p class="checkout-page__note" data-checkout-note>
+                  Тестовая сумма 100 ₽ для проверки эквайринга.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../../js/checkout.js"></script>
+  </body>
+</html>
