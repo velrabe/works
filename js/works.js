@@ -137,9 +137,38 @@
   var copyBtn = document.querySelector("[data-copy-requisites]");
   var source = document.getElementById("requisites-plain-text");
 
-  if (copyBtn && source) {
+  function getRequisitesCopyText() {
+    var rows = document.querySelectorAll("#modal-requisites .works-modal__requisites-row");
+    if (rows.length) {
+      return Array.prototype.map
+        .call(rows, function (row) {
+          var labelEl = row.querySelector(".works-modal__requisites-label");
+          var valueEl = row.querySelector(".works-modal__requisites-value");
+          if (!labelEl || !valueEl) return "";
+
+          var label = labelEl.textContent.trim();
+          var value = valueEl.textContent.trim();
+          if (!value) return "";
+
+          if (label === "ИП") {
+            return "ИП " + value;
+          }
+
+          return label + ": " + value;
+        })
+        .filter(Boolean)
+        .join("\n");
+    }
+
+    return source ? source.textContent.trim() : "";
+  }
+
+  if (copyBtn) {
     copyBtn.addEventListener("click", function () {
-      navigator.clipboard.writeText(source.innerText.trim()).then(function () {
+      var text = getRequisitesCopyText();
+      if (!text) return;
+
+      navigator.clipboard.writeText(text).then(function () {
         copyBtn.setAttribute("data-copied", "true");
         setTimeout(function () {
           copyBtn.removeAttribute("data-copied");
