@@ -1356,8 +1356,20 @@ html.works-modal-open {
   font-size: 0.9375rem;
   font-weight: 500;
   line-height: 1.5rem;
+  border: 0;
   border-bottom: 0.0625rem solid transparent;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
   transition: border-color 0.2s ease;
+}
+
+.works-page__footer-link-text {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  color: var(--works-text);
 }
 
 .works-page__footer-link:hover {
@@ -1385,26 +1397,33 @@ html.works-modal-open {
   padding-top: 1.5rem;
 }
 
-.works-page__footer-age-wrap {
+.works-page__footer-docs {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-bottom: 1rem;
+  padding-bottom: 1.5rem;
 }
 
-.works-page__footer-age {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  line-height: 1.25rem;
-  color: var(--works-muted);
-}
-
-.works-page__footer-payments {
+.works-page__footer-bottom {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   width: 100%;
+}
+
+.works-page__footer-age-wrap {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding-right: 1rem;
+}
+
+.works-page__footer-age {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1rem;
+  color: var(--works-muted);
 }
 
 .works-page__footer-payments-icons {
@@ -1412,7 +1431,6 @@ html.works-modal-open {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  width: 100%;
   gap: 1rem;
 }
 
