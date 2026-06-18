@@ -1426,7 +1426,8 @@ html.works-modal-open {
 .works-page__footer-pay-icon-wrap {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  flex-shrink: 0;
+  align-items: flex-start;
   justify-content: center;
   height: 1rem;
   color: var(--works-text);
@@ -1434,8 +1435,10 @@ html.works-modal-open {
 
 .works-page__footer-pay-icon {
   display: block;
-  width: auto;
+  flex-shrink: 0;
   height: 1rem;
+  width: auto;
+  max-width: none;
 }
 
 .works-fab {
