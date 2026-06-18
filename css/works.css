@@ -1121,7 +1121,7 @@ html.works-modal-open {
 .works-page__link-card-inner {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
 }
 
@@ -1148,6 +1148,7 @@ html.works-modal-open {
   border: 0.0625rem solid var(--works-border);
   border-radius: 999rem;
   background-color: var(--works-surface);
+  margin-top: 0.875rem;
   margin-right: 0.75rem;
 }
 
@@ -1694,5 +1695,38 @@ html.works-modal-open {
 
   .works-page__card-body--split .works-page__card-col:last-child {
     padding-left: 0.75rem;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .works-page__carousel-shell {
+    margin-left: calc(-1 * var(--works-gutter));
+    margin-right: calc(-1 * var(--works-gutter));
+    width: calc(100% + 2 * var(--works-gutter));
+  }
+
+  .works-page__carousel-control {
+    display: none;
+  }
+
+  .works-page__carousel-track {
+    scroll-padding-inline: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .works-page__carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    margin-right: 0;
+  }
+
+  .works-page__carousel-img {
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
   }
 }
