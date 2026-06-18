@@ -24,6 +24,13 @@ html {
   scrollbar-gutter: stable;
 }
 
+#branding,
+#pitch-deks,
+#portfolio,
+#documents {
+  scroll-margin-top: 1.5rem;
+}
+
 body {
   font-family: var(--works-font);
   color: var(--works-text);
@@ -1398,20 +1405,6 @@ html.works-modal-open {
   flex-wrap: wrap;
   align-items: center;
   width: 100%;
-}
-
-.works-page__footer-payments-label-wrap {
-  display: flex;
-  flex-direction: column;
-  padding-right: 0.75rem;
-  padding-bottom: 0.5rem;
-}
-
-.works-page__footer-payments-label {
-  font-size: 0.8125rem;
-  font-weight: 400;
-  line-height: 1.25rem;
-  color: var(--works-muted);
 }
 
 .works-page__footer-payments-icons {
