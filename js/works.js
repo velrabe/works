@@ -135,7 +135,6 @@
 
 (function () {
   var copyBtn = document.querySelector("[data-copy-requisites]");
-  var downloadBtn = document.querySelector("[data-download-requisites]");
   var source = document.getElementById("requisites-plain-text");
 
   if (copyBtn && source) {
@@ -146,16 +145,6 @@
           copyBtn.removeAttribute("data-copied");
         }, 2000);
       });
-    });
-  }
-
-  if (downloadBtn && source) {
-    downloadBtn.addEventListener("click", function () {
-      if (!window.jspdf || !window.jspdf.jsPDF) return;
-      var doc = new window.jspdf.jsPDF();
-      var lines = doc.splitTextToSize(source.innerText.trim(), 180);
-      doc.text(lines, 14, 20);
-      doc.save("requisites.pdf");
     });
   }
 })();
