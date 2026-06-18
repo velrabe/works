@@ -29,7 +29,10 @@
   }
 
   function scrollCarousel(btn, direction) {
-    var carousel = btn.closest("[data-carousel]");
+    var showcase = btn.closest(".works-page__showcase");
+    var carousel = showcase
+      ? showcase.querySelector("[data-carousel]")
+      : btn.closest("[data-carousel]");
     if (!carousel) return;
     var track = carousel.querySelector(".works-page__carousel-track");
     if (!track) return;
