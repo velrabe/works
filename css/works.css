@@ -1093,14 +1093,25 @@ html.works-modal-open {
   padding-bottom: 1.5rem;
 }
 
+.works-page__card--cover-first > .works-page__case-cover {
+  padding-top: 1.5rem;
+  padding-bottom: 0;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.works-page__card--cover-first > .works-page__card-head {
+  padding-top: 1rem;
+}
+
 .works-page__card-row {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.works-page__case-cover + .works-page__card-row {
-  padding-top: 1rem;
+.works-page__card-body > .works-page__card-row:first-child {
+  padding-top: 0;
 }
 
 .works-page__media {

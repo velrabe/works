@@ -617,12 +617,14 @@
   border: 0.0625rem solid rgba(255, 255, 255, 0.08);
 }
 
-.works-page__case-cover-text {
+.works-page__case-cover-main {
   position: relative;
   z-index: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex: 1;
   width: 100%;
+  min-height: 0;
   padding-top: 1rem;
   padding-bottom: 0;
   padding-left: 1rem;
@@ -634,6 +636,10 @@
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
+  padding-top: 0;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .works-page__case-cover-tag-wrap {
@@ -663,11 +669,11 @@
 .works-page__case-cover-quote-wrap {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding-top: 0.75rem;
+  width: 50%;
+  padding-top: 0;
   padding-bottom: 0;
   padding-left: 0;
-  padding-right: 0;
+  padding-right: 1rem;
 }
 
 .works-page__case-cover-quote-text {
@@ -704,22 +710,20 @@
 }
 
 .works-page__case-widget-slot {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 1.5rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  width: 50%;
+  align-items: flex-end;
+  justify-content: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 1rem;
+  padding-right: 0;
   transform: translate3d(
+    calc((1 - var(--widget-progress)) * 30%),
     0,
-    calc((1 - var(--widget-progress)) * 100%),
     0
   );
   opacity: calc(0.2 + var(--widget-progress) * 0.8);
@@ -730,9 +734,9 @@
 .works-page__case-widget-scale {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   transform: scale(0.5);
-  transform-origin: center bottom;
+  transform-origin: center right;
 }
 
 .works-page__case-widget-scale .app-widget {
@@ -741,8 +745,6 @@
   background-color: rgba(0, 4, 6, 0.55);
   backdrop-filter: blur(1rem);
   -webkit-backdrop-filter: blur(1rem);
-  border: 0.0625rem solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.25);
 }
 
 @media (prefers-reduced-motion: reduce) {
