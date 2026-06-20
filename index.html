@@ -12,11 +12,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=Manrope:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/works.css" />
+    <link rel="stylesheet" href="css/app-widget.css" />
   </head>
   <body>
     <div class="page-root">
@@ -267,165 +268,318 @@
                       </div>
                     </div>
                   </div>
-                  <div class="works-page__card-col">
-                    <div class="works-page__case">
-                      <div class="works-page__case-hero">
-                        <div class="works-page__case-hero-head">
-                          <div class="works-page__case-hero-title-wrap">
-                            <h3 class="works-page__case-hero-title">
-                              Создание и&nbsp;запуск криптопродукта
-                            </h3>
+                  <div class="works-page__card-col works-page__card-col--stack">
+                    <div class="works-page__media">
+                      <div class="works-page__media-frame">
+                        <video
+                          class="works-page__media-video"
+                          src="img/vid-prew/counter.mp4"
+                          autoplay
+                          muted
+                          loop
+                          playsinline
+                          aria-label="Swaps.io preview"
+                        ></video>
+                      </div>
+                    </div>
+                    <div class="works-page__case-app">
+                    <div class="case-hero__app-body">
+                      <div class="app-widget">
+                        <div class="app-widget__header">
+                          <div class="app-widget__header-left">
+                            <button
+                              class="app-widget__icon-btn"
+                              type="button"
+                              aria-label="Back"
+                            >
+                              <div class="app-widget__icon-wrap">
+                                <img
+                                  class="app-widget__icon app-widget__icon--arrow"
+                                  src="img/chewron-left.svg"
+                                  alt=""
+                                  aria-hidden="true"
+                                />
+                              </div>
+                            </button>
+                            <div class="app-widget__title-wrap">
+                              <p class="app-widget__title">
+                                Deposit to Savings USDC
+                              </p>
+                            </div>
                           </div>
-                          <div class="works-page__case-hero-lead-wrap">
-                            <p class="works-page__case-hero-lead">
-                              Кейс DeFi-продукта про дизайн интерфейсов, продуктовую
-                              структуру и&nbsp;запуск в&nbsp;реальных ограничениях.
-                            </p>
+                          <div class="app-widget__header-right">
+                            <div class="app-widget__toggle-row">
+                              <div class="app-widget__toggle-label-wrap">
+                                <p class="app-widget__toggle-label">Fixed</p>
+                              </div>
+                              <div class="app-widget__switch-wrap">
+                                <div class="app-widget__switch-track">
+                                  <div
+                                    class="app-widget__switch-dot"
+                                    aria-hidden="true"
+                                  ></div>
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              class="app-widget__icon-btn"
+                              type="button"
+                              aria-label="Filters"
+                            >
+                              <div class="app-widget__icon-wrap">
+                                <img
+                                  class="app-widget__icon app-widget__icon--filters"
+                                  src="img/filters.svg"
+                                  alt=""
+                                  aria-hidden="true"
+                                />
+                              </div>
+                            </button>
                           </div>
                         </div>
-                        <div class="works-page__case-hero-meta">
-                          <div class="works-page__case-hero-period-wrap">
-                            <span class="works-page__case-hero-period">2023–2026</span>
-                          </div>
-                          <div class="works-page__case-hero-tags">
-                            <div class="works-page__case-hero-tag-wrap">
-                              <span class="works-page__case-hero-tag">Продуктовый дизайн</span>
+                        <div class="app-widget__body">
+                          <div class="app-widget__inputs">
+                            <div
+                              class="app-widget__input app-widget__input--top"
+                            >
+                              <div class="app-widget__input-left">
+                                <div class="app-widget__input-label-wrap">
+                                  <p class="app-widget__input-label">
+                                    Deposit Amount
+                                  </p>
+                                </div>
+                                <div class="app-widget__input-amount-row">
+                                  <p class="app-widget__input-amount">1000</p>
+                                  <p class="app-widget__input-ticker">USDT</p>
+                                </div>
+                                <div class="app-widget__input-fiat-wrap">
+                                  <p class="app-widget__input-fiat">$999.3</p>
+                                </div>
+                              </div>
+                              <div class="app-widget__input-right">
+                                <div class="app-widget__powered-wrap">
+                                  <div class="app-widget__powered-text-wrap">
+                                    <p class="app-widget__powered-text">
+                                      Powered by ENSO
+                                    </p>
+                                  </div>
+                                  <div class="app-widget__powered-logo-wrap">
+                                    <img
+                                      class="app-widget__powered-logo"
+                                      src="img/enso-logo-white.svg"
+                                      alt=""
+                                      aria-hidden="true"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="app-widget__selector">
+                                  <div class="app-widget__selector-icon-wrap">
+                                    <img
+                                      class="app-widget__selector-icon"
+                                      src="img/usdt.svg"
+                                      alt=""
+                                      aria-hidden="true"
+                                    />
+                                    <div
+                                      class="app-widget__selector-network-wrap"
+                                    >
+                                      <img
+                                        class="app-widget__selector-network"
+                                        src="img/bnb.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="app-widget__selector-label-wrap">
+                                    <p class="app-widget__selector-label">
+                                      USDT
+                                    </p>
+                                  </div>
+                                  <div
+                                    class="app-widget__selector-chevron-wrap"
+                                  >
+                                    <img
+                                      class="app-widget__selector-chevron"
+                                      src="img/chewron-down.svg"
+                                      alt=""
+                                      aria-hidden="true"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="app-widget__balance-row">
+                                  <div class="app-widget__balance-text-wrap">
+                                    <p class="app-widget__balance-text">
+                                      Balance: 1200 USDT
+                                    </p>
+                                  </div>
+                                  <div class="app-widget__balance-max-wrap">
+                                    <p class="app-widget__balance-max">Max</p>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <div class="works-page__case-hero-tag-wrap">
-                              <span class="works-page__case-hero-tag">UX/UI</span>
+                            <div
+                              class="app-widget__input app-widget__input--bottom"
+                            >
+                              <div class="app-widget__input-left">
+                                <div class="app-widget__input-label-wrap">
+                                  <p class="app-widget__input-label">
+                                    <span
+                                      class="app-widget__input-label-plain"
+                                      >To </span
+                                    ><span
+                                      class="app-widget__input-label-highlight"
+                                      >Savings USDC</span
+                                    >
+                                  </p>
+                                </div>
+                                <div class="app-widget__input-amount-row">
+                                  <p class="app-widget__input-amount">
+                                    $999.3
+                                  </p>
+                                  <p class="app-widget__input-ticker">
+                                    sUSDC
+                                  </p>
+                                </div>
+                                <div class="app-widget__input-fiat-wrap">
+                                  <p class="app-widget__input-fiat">$999.3</p>
+                                </div>
+                              </div>
+                              <div class="app-widget__input-right">
+                                <div
+                                  class="app-widget__powered-spacer"
+                                  aria-hidden="true"
+                                ></div>
+                                <div
+                                  class="app-widget__selector app-widget__selector--outlined"
+                                >
+                                  <div class="app-widget__selector-icon-wrap">
+                                    <img
+                                      class="app-widget__selector-icon"
+                                      src="img/usdc.svg"
+                                      alt=""
+                                      aria-hidden="true"
+                                    />
+                                    <div
+                                      class="app-widget__selector-network-wrap"
+                                    >
+                                      <img
+                                        class="app-widget__selector-network"
+                                        src="img/spark.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="app-widget__selector-label-wrap">
+                                    <p class="app-widget__selector-label">
+                                      sUSDC
+                                    </p>
+                                  </div>
+                                </div>
+                                <div class="app-widget__balance-row">
+                                  <div class="app-widget__balance-text-wrap">
+                                    <p class="app-widget__balance-text">
+                                      Balance: 0 sUSDC
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <div class="works-page__case-hero-tag-wrap">
-                              <span class="works-page__case-hero-tag">Запуск</span>
+                          </div>
+                          <div class="app-widget__action-bar">
+                            <div class="app-widget__info-row">
+                              <div class="app-widget__info-col">
+                                <div class="app-widget__info-title-wrap">
+                                  <p class="app-widget__info-title">Balance</p>
+                                </div>
+                                <div class="app-widget__info-value-row">
+                                  <div class="app-widget__chip">
+                                    <div class="app-widget__chip-icon-wrap">
+                                      <img
+                                        class="app-widget__chip-icon"
+                                        src="img/spark.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                    <div class="app-widget__chip-text-wrap">
+                                      <p class="app-widget__chip-text">0.00</p>
+                                    </div>
+                                  </div>
+                                  <div class="app-widget__info-arrow-wrap">
+                                    <img
+                                      class="app-widget__info-arrow"
+                                      src="img/chewron-left.svg"
+                                      alt=""
+                                      aria-hidden="true"
+                                    />
+                                  </div>
+                                  <div class="app-widget__chip">
+                                    <div class="app-widget__chip-icon-wrap">
+                                      <img
+                                        class="app-widget__chip-icon"
+                                        src="img/spark.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                    <div class="app-widget__chip-text-wrap">
+                                      <p class="app-widget__chip-text">
+                                        999.3
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                class="app-widget__info-divider"
+                                aria-hidden="true"
+                              ></div>
+                              <div class="app-widget__info-col">
+                                <div class="app-widget__info-title-wrap">
+                                  <p class="app-widget__info-title">
+                                    Current APY:
+                                  </p>
+                                </div>
+                                <div class="app-widget__info-value-row">
+                                  <div
+                                    class="app-widget__chip app-widget__chip--apy"
+                                  >
+                                    <div class="app-widget__chip-text-wrap">
+                                      <p class="app-widget__chip-apy-label">
+                                        APY
+                                      </p>
+                                    </div>
+                                    <div class="app-widget__chip-text-wrap">
+                                      <p class="app-widget__chip-apy-value">
+                                        12.45%
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div class="app-widget__info-note-wrap">
+                                    <p class="app-widget__info-note">
+                                      ~4.58 USDC / year
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <div class="works-page__case-hero-tag-wrap">
-                              <span class="works-page__case-hero-tag">DeFi</span>
-                            </div>
+                            <button
+                              class="app-widget__deposit-btn"
+                              type="button"
+                            >
+                              <div class="app-widget__deposit-btn-text-wrap">
+                                <p class="app-widget__deposit-btn-text">
+                                  Deposit
+                                </p>
+                              </div>
+                            </button>
                           </div>
-                        </div>
-                        <div class="works-page__case-hero-topics">
-                          <div class="works-page__case-hero-topic-wrap">
-                            <span class="works-page__case-hero-topic">Маркетплейс dApp</span>
-                          </div>
-                          <div class="works-page__case-hero-topic-wrap">
-                            <span class="works-page__case-hero-topic">Сценарии обмена</span>
-                          </div>
-                          <div class="works-page__case-hero-topic-wrap">
-                            <span class="works-page__case-hero-topic">Управление активами</span>
-                          </div>
-                        </div>
-                        <div class="works-page__case-hero-quote-wrap">
-                          <p class="works-page__case-hero-quote">
-                            Продукт, объединяющий поиск, депозит и&nbsp;управление активами
-                            в&nbsp;одном интерфейсе
-                          </p>
                         </div>
                       </div>
-
-                      <div class="works-page__case-block">
-                        <div class="works-page__case-block-title-wrap">
-                          <h4 class="works-page__case-block-title">Моя роль</h4>
-                        </div>
-                        <div class="works-page__list">
-                          <div class="works-page__list-item">
-                            <div class="works-page__list-marker-wrap">
-                              <span class="works-page__list-marker"></span>
-                            </div>
-                            <div class="works-page__list-text-wrap">
-                              <p class="works-page__list-text">
-                                Отвечал за UX и&nbsp;дизайн интерфейсов
-                              </p>
-                            </div>
-                          </div>
-                          <div class="works-page__list-item">
-                            <div class="works-page__list-marker-wrap">
-                              <span class="works-page__list-marker"></span>
-                            </div>
-                            <div class="works-page__list-text-wrap">
-                              <p class="works-page__list-text">
-                                Координировал работу между дизайном, разработкой
-                                и&nbsp;бизнесом
-                              </p>
-                            </div>
-                          </div>
-                          <div class="works-page__list-item">
-                            <div class="works-page__list-marker-wrap">
-                              <span class="works-page__list-marker"></span>
-                            </div>
-                            <div class="works-page__list-text-wrap">
-                              <p class="works-page__list-text">
-                                Переводил бизнес-идеи в&nbsp;рабочие продуктовые фичи
-                              </p>
-                            </div>
-                          </div>
-                          <div class="works-page__list-item">
-                            <div class="works-page__list-marker-wrap">
-                              <span class="works-page__list-marker"></span>
-                            </div>
-                            <div class="works-page__list-text-wrap">
-                              <p class="works-page__list-text">
-                                Поддерживал документацию и&nbsp;продуктовую структуру
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="works-page__case-block">
-                        <div class="works-page__case-block-title-wrap">
-                          <h4 class="works-page__case-block-title">Как работал</h4>
-                        </div>
-                        <div class="works-page__case-text-wrap">
-                          <p class="works-page__case-text">
-                            Работал в&nbsp;быстро меняющейся среде с&nbsp;неполными
-                            требованиями.
-                          </p>
-                        </div>
-                        <div class="works-page__case-text-wrap">
-                          <p class="works-page__case-text">
-                            Концепты → валидация с&nbsp;командой → итерации
-                            в&nbsp;разработке → релиз.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div class="works-page__case-block">
-                        <div class="works-page__case-block-title-wrap">
-                          <h4 class="works-page__case-block-title">Запуск</h4>
-                        </div>
-                        <div class="works-page__list">
-                          <div class="works-page__list-item">
-                            <div class="works-page__list-marker-wrap">
-                              <span class="works-page__list-marker"></span>
-                            </div>
-                            <div class="works-page__list-text-wrap">
-                              <p class="works-page__list-text">
-                                Запустил функциональность обмена с&nbsp;первоначальной
-                                командой
-                              </p>
-                            </div>
-                          </div>
-                          <div class="works-page__list-item">
-                            <div class="works-page__list-marker-wrap">
-                              <span class="works-page__list-marker"></span>
-                            </div>
-                            <div class="works-page__list-text-wrap">
-                              <p class="works-page__list-text">
-                                Позже вывел маркетплейс с&nbsp;урезанной командой
-                              </p>
-                            </div>
-                          </div>
-                          <div class="works-page__list-item">
-                            <div class="works-page__list-marker-wrap">
-                              <span class="works-page__list-marker"></span>
-                            </div>
-                            <div class="works-page__list-text-wrap">
-                              <p class="works-page__list-text">
-                                Поддерживал продукт на&nbsp;этапах масштабирования
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                    </div>
                     </div>
                   </div>
                 </div>
