@@ -359,3 +359,54 @@
   window.addEventListener("resize", onScroll);
   update();
 })();
+
+(function () {
+  var quote = document.querySelector("[data-case-cover-quote]");
+  if (!quote) return;
+
+  var panel = quote.closest(".works-page__case-cover-panel");
+  var text = quote.textContent.replace(/\s+/g, " ").trim();
+  var chars = text.split("");
+  var played = false;
+  var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  quote.textContent = "";
+
+  chars.forEach(function (char) {
+    var span = document.createElement("span");
+    span.textContent = char;
+    span.className = "works-page__case-cover-char";
+    if (reducedMotion) {
+      span.style.opacity = "1";
+    }
+    quote.appendChild(span);
+  });
+
+  function playFocusIn() {
+    if (played || reducedMotion) return;
+    played = true;
+    quote.querySelectorAll(".works-page__case-cover-char").forEach(function (span, index) {
+      span.style.animationDelay = index * 0.05 + "s";
+      span.classList.add("is-focus-in");
+    });
+  }
+
+  if (!panel) {
+    playFocusIn();
+    return;
+  }
+
+  var observer = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          playFocusIn();
+          observer.disconnect();
+        }
+      });
+    },
+    { threshold: 0.35, rootMargin: "0px 0px -10% 0px" }
+  );
+
+  observer.observe(panel);
+})();
