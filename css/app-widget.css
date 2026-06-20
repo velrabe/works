@@ -610,13 +610,11 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 20rem;
+  height: 26rem;
   overflow: hidden;
-  background-color: rgba(2, 15, 21, 0.32);
-  backdrop-filter: blur(1rem);
-  -webkit-backdrop-filter: blur(1rem);
+  background-color: #020f15;
   border-radius: var(--works-radius-sm);
-  border: 0.0625rem solid rgba(255, 255, 255, 0.12);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.08);
 }
 
 .works-page__case-cover-text {
@@ -681,6 +679,9 @@
   width: 100%;
   align-items: center;
   justify-content: flex-end;
+  padding-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
   transform: translate3d(
     0,
     calc((1 - var(--widget-progress)) * 100%),
@@ -701,13 +702,18 @@
 
 .works-page__case-widget-scale .app-widget {
   width: 35.5rem;
-  max-width: calc(100vw - 4rem);
+  max-width: calc(100vw - 5rem);
+  background-color: rgba(0, 4, 6, 0.55);
+  backdrop-filter: blur(1rem);
+  -webkit-backdrop-filter: blur(1rem);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.25);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .works-page__case-cover-panel {
     height: auto;
-    min-height: 16rem;
+    min-height: 20rem;
     padding-bottom: 1rem;
   }
 
