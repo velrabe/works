@@ -386,7 +386,7 @@
     if (played || reducedMotion) return;
     played = true;
     quote.querySelectorAll(".works-page__case-cover-char").forEach(function (span, index) {
-      span.style.animationDelay = index * 0.05 + "s";
+      span.style.animationDelay = index * 0.025 + "s";
       span.classList.add("is-focus-in");
     });
   }
