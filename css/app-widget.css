@@ -622,11 +622,12 @@
   z-index: 1;
   display: flex;
   flex-direction: row;
+  align-items: stretch;
   flex: 1;
   width: 100%;
   min-height: 0;
   padding-top: 1rem;
-  padding-bottom: 0;
+  padding-bottom: 1rem;
   padding-left: 1rem;
   padding-right: 1rem;
 }
@@ -637,9 +638,9 @@
   flex-wrap: wrap;
   width: 100%;
   padding-top: 0;
-  padding-bottom: 1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .works-page__case-cover-tag-wrap {
@@ -669,7 +670,9 @@
 .works-page__case-cover-quote-wrap {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 50%;
+  min-height: 0;
   padding-top: 0;
   padding-bottom: 0;
   padding-left: 0;
@@ -681,13 +684,22 @@
   font-weight: 300;
   font-size: 2.125rem;
   line-height: 1.2;
-  letter-spacing: 0.05em;
   color: #ffffff;
 }
 
-.works-page__case-cover-char {
+.works-page__case-cover-word {
+  display: inline-block;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.works-page__case-cover-space {
   display: inline-block;
   white-space: pre;
+}
+
+.works-page__case-cover-char {
+  display: inline;
   opacity: 0;
 }
 

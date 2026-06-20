@@ -366,20 +366,34 @@
 
   var panel = quote.closest(".works-page__case-cover-panel");
   var text = quote.textContent.replace(/\s+/g, " ").trim();
-  var chars = text.split("");
+  var words = text.split(" ");
   var played = false;
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   quote.textContent = "";
 
-  chars.forEach(function (char) {
-    var span = document.createElement("span");
-    span.textContent = char;
-    span.className = "works-page__case-cover-char";
-    if (reducedMotion) {
-      span.style.opacity = "1";
+  words.forEach(function (word, wordIndex) {
+    var wordSpan = document.createElement("span");
+    wordSpan.className = "works-page__case-cover-word";
+
+    word.split("").forEach(function (char) {
+      var charSpan = document.createElement("span");
+      charSpan.textContent = char;
+      charSpan.className = "works-page__case-cover-char";
+      if (reducedMotion) {
+        charSpan.style.opacity = "1";
+      }
+      wordSpan.appendChild(charSpan);
+    });
+
+    quote.appendChild(wordSpan);
+
+    if (wordIndex < words.length - 1) {
+      var spaceSpan = document.createElement("span");
+      spaceSpan.className = "works-page__case-cover-space";
+      spaceSpan.textContent = " ";
+      quote.appendChild(spaceSpan);
     }
-    quote.appendChild(span);
   });
 
   function playFocusIn() {

@@ -1131,6 +1131,10 @@ html.works-modal-open {
   background-color: #f0f0ee;
 }
 
+.works-page__media-frame:has(.works-page__media-video) {
+  aspect-ratio: 16 / 9;
+}
+
 .works-page__media-img {
   display: block;
   width: 100%;
@@ -1147,7 +1151,8 @@ html.works-modal-open {
 .works-page__media-video {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
 }
 
 .works-page__link-card {
