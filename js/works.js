@@ -315,3 +315,43 @@
     }
   });
 })();
+
+(function () {
+  var cover = document.querySelector("[data-case-cover]");
+  var scene = document.querySelector("[data-case-cover-scene]");
+  if (!cover || !scene) return;
+
+  var ticking = false;
+
+  function smootherStep(t) {
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+    return t * t * t * (t * (t * 6 - 15) + 10);
+  }
+
+  function update() {
+    ticking = false;
+    var rect = scene.getBoundingClientRect();
+    var scrollRange = scene.offsetHeight - window.innerHeight;
+    if (scrollRange <= 0) {
+      cover.style.setProperty("--widget-progress", "1");
+      return;
+    }
+
+    var raw = -rect.top / scrollRange;
+    if (raw < 0) raw = 0;
+    if (raw > 1) raw = 1;
+    cover.style.setProperty("--widget-progress", String(smootherStep(raw)));
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  update();
+})();
