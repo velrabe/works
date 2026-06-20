@@ -1093,6 +1093,12 @@ html.works-modal-open {
   padding-bottom: 1.5rem;
 }
 
+.works-page__card-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .works-page__media {
   display: flex;
   flex-direction: column;
@@ -1127,12 +1133,6 @@ html.works-modal-open {
   display: block;
   width: 100%;
   height: auto;
-}
-
-.works-page__card-col--stack {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 }
 
 .works-page__link-card {
@@ -1792,21 +1792,25 @@ html.works-modal-open {
     margin-right: 0;
   }
 
-  .works-page__card-body--split {
+  .works-page__card-body--split,
+  .works-page__card-row--split {
     flex-direction: row;
   }
 
-  .works-page__card-body--split .works-page__card-col {
+  .works-page__card-body--split .works-page__card-col,
+  .works-page__card-row--split .works-page__card-col {
     display: flex;
     flex-direction: column;
     width: 100%;
   }
 
-  .works-page__card-body--split .works-page__card-col:first-child {
+  .works-page__card-body--split .works-page__card-col:first-child,
+  .works-page__card-row--split .works-page__card-col:first-child {
     padding-right: 0.75rem;
   }
 
-  .works-page__card-body--split .works-page__card-col:last-child {
+  .works-page__card-body--split .works-page__card-col:last-child,
+  .works-page__card-row--split .works-page__card-col:last-child {
     padding-left: 0.75rem;
   }
 }
