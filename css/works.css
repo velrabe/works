@@ -1099,6 +1099,10 @@ html.works-modal-open {
   width: 100%;
 }
 
+.works-page__case-cover + .works-page__card-row {
+  padding-top: 1rem;
+}
+
 .works-page__media {
   display: flex;
   flex-direction: column;
