@@ -318,10 +318,16 @@
 
 (function () {
   var cover = document.querySelector("[data-case-cover]");
-  var scene = document.querySelector("[data-case-cover-scene]");
-  if (!cover || !scene) return;
+  if (!cover) return;
+
+  var panel = cover.querySelector(".works-page__case-cover-panel");
+  if (!panel) return;
 
   var ticking = false;
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
 
   function smootherStep(t) {
     if (t <= 0) return 0;
@@ -331,17 +337,15 @@
 
   function update() {
     ticking = false;
-    var rect = scene.getBoundingClientRect();
-    var scrollRange = scene.offsetHeight - window.innerHeight;
-    if (scrollRange <= 0) {
-      cover.style.setProperty("--widget-progress", "1");
-      return;
-    }
-
-    var raw = -rect.top / scrollRange;
-    if (raw < 0) raw = 0;
-    if (raw > 1) raw = 1;
-    cover.style.setProperty("--widget-progress", String(smootherStep(raw)));
+    var rect = panel.getBoundingClientRect();
+    var viewHeight = window.innerHeight;
+    var start = viewHeight * 0.9;
+    var end = viewHeight * 0.4;
+    var raw = (start - rect.top) / (start - end);
+    cover.style.setProperty(
+      "--widget-progress",
+      String(smootherStep(clamp(raw, 0, 1)))
+    );
   }
 
   function onScroll() {
