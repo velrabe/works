@@ -86,10 +86,40 @@
     if (role) captionTextWrap.appendChild(createCaptionBlock("role", "p", role));
     if (desc) captionTextWrap.appendChild(createCaptionBlock("desc", "p", desc));
 
+    var fullscreenBtn = document.createElement("button");
+    fullscreenBtn.type = "button";
+    fullscreenBtn.className = "works-page__carousel-slide-fullscreen";
+    fullscreenBtn.setAttribute("data-carousel-fullscreen", "");
+    fullscreenBtn.setAttribute("aria-label", "Открыть на весь экран");
+
+    var fullscreenIconWrap = document.createElement("span");
+    fullscreenIconWrap.className = "works-page__carousel-slide-fullscreen-icon-wrap";
+
+    var fullscreenIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    fullscreenIcon.setAttribute("class", "works-page__carousel-slide-fullscreen-icon");
+    fullscreenIcon.setAttribute("viewBox", "0 0 14 14");
+    fullscreenIcon.setAttribute("aria-hidden", "true");
+
+    var fullscreenPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    fullscreenPath.setAttribute(
+      "d",
+      "M1 5V1H5M9 1H13V5M13 9V13H9M5 13H1V9"
+    );
+    fullscreenPath.setAttribute("fill", "none");
+    fullscreenPath.setAttribute("stroke", "currentColor");
+    fullscreenPath.setAttribute("stroke-width", "1.2");
+
+    fullscreenIcon.appendChild(fullscreenPath);
+    fullscreenIconWrap.appendChild(fullscreenIcon);
+    fullscreenBtn.appendChild(fullscreenIconWrap);
+
+    img.setAttribute("draggable", "false");
+
     captionWrap.appendChild(captionTextWrap);
     slide.insertBefore(inner, img);
     inner.appendChild(img);
     inner.appendChild(captionWrap);
+    inner.appendChild(fullscreenBtn);
     bindSlideHoverRandom(slide);
   }
 
@@ -381,102 +411,69 @@
     });
   }
 
-  function applyDragOffset(offset) {
-    branding.measure();
-    pitch.measure();
-    branding.track.style.transition = "none";
-    pitch.track.style.transition = "none";
-    branding.track.style.transform =
-      "translate3d(" + (branding.getTranslateX() + offset) + "px, 0, 0)";
-    pitch.track.style.transform =
-      "translate3d(" + (pitch.getTranslateX() - offset) + "px, 0, 0)";
-  }
+  function initGalleryDrag() {
+    var surface = document.querySelector(".works-page__showcase-gallery-rows");
+    if (!surface) return;
 
-  function bindGalleryDrag() {
-    var galleryRows = document.querySelector(".works-page__showcase-gallery-rows");
-    if (!galleryRows) return;
-
-    var dragging = false;
-    var pointerId = null;
     var startX = 0;
-    var currentOffset = 0;
-    var dragMoved = false;
+    var deltaX = 0;
+    var baseBrandingX = 0;
+    var basePitchX = 0;
+    var dragging = false;
     var DRAG_THRESHOLD = 48;
 
-    window.__worksGalleryDragMoved = false;
-
-    function setDraggingState(active) {
-      branding.viewport.classList.toggle("is-dragging", active);
-      pitch.viewport.classList.toggle("is-dragging", active);
-    }
-
-    function finishDrag() {
-      if (!dragging) return;
-      dragging = false;
-      setDraggingState(false);
-
-      if (dragMoved) {
-        window.__worksGalleryDragMoved = true;
-        window.setTimeout(function () {
-          window.__worksGalleryDragMoved = false;
-        }, 0);
-      }
-
-      var delta = 0;
-      if (currentOffset < -DRAG_THRESHOLD) {
-        delta = 1;
-      } else if (currentOffset > DRAG_THRESHOLD) {
-        delta = -1;
-      }
-
-      currentOffset = 0;
-
-      if (delta) {
-        step(delta);
-      } else {
-        applyRows(true);
-      }
-    }
-
-    galleryRows.addEventListener("pointerdown", function (event) {
-      if (animating || event.button > 0) return;
-      if (event.target.closest(".works-page__carousel-control")) return;
+    function onPointerDown(event) {
+      if (animating) return;
+      if (event.target.closest("[data-carousel-fullscreen]")) return;
 
       dragging = true;
-      dragMoved = false;
-      pointerId = event.pointerId;
+      deltaX = 0;
       startX = event.clientX;
-      currentOffset = 0;
-      setDraggingState(true);
+      branding.measure();
+      pitch.measure();
+      baseBrandingX = branding.getTranslateX();
+      basePitchX = pitch.getTranslateX();
+      surface.classList.add("is-dragging");
+      surface.setPointerCapture(event.pointerId);
+    }
 
-      if (galleryRows.setPointerCapture) {
-        galleryRows.setPointerCapture(event.pointerId);
+    function onPointerMove(event) {
+      if (!dragging) return;
+
+      deltaX = event.clientX - startX;
+      branding.track.style.transition = "none";
+      pitch.track.style.transition = "none";
+      branding.track.style.transform =
+        "translate3d(" + (baseBrandingX + deltaX) + "px, 0, 0)";
+      pitch.track.style.transform =
+        "translate3d(" + (basePitchX - deltaX) + "px, 0, 0)";
+    }
+
+    function onPointerUp(event) {
+      if (!dragging) return;
+
+      dragging = false;
+      surface.classList.remove("is-dragging");
+
+      if (surface.hasPointerCapture(event.pointerId)) {
+        surface.releasePointerCapture(event.pointerId);
       }
-    });
 
-    galleryRows.addEventListener("pointermove", function (event) {
-      if (!dragging || event.pointerId !== pointerId) return;
-
-      currentOffset = event.clientX - startX;
-      if (Math.abs(currentOffset) > 6) {
-        dragMoved = true;
+      if (Math.abs(deltaX) >= DRAG_THRESHOLD) {
+        step(deltaX > 0 ? -1 : 1);
+        return;
       }
 
-      applyDragOffset(currentOffset);
-    });
+      applyRows(true);
+    }
 
-    galleryRows.addEventListener("pointerup", function (event) {
-      if (event.pointerId !== pointerId) return;
-      finishDrag();
-    });
-
-    galleryRows.addEventListener("pointercancel", function (event) {
-      if (event.pointerId !== pointerId) return;
-      finishDrag();
-    });
+    surface.addEventListener("pointerdown", onPointerDown);
+    surface.addEventListener("pointermove", onPointerMove);
+    surface.addEventListener("pointerup", onPointerUp);
+    surface.addEventListener("pointercancel", onPointerUp);
   }
 
-  bindGalleryDrag();
+  initGalleryDrag();
 })();
 
 (function () {
@@ -682,18 +679,22 @@
     updateView();
   }
 
-  document
-    .querySelectorAll("[data-linked-row] .works-page__carousel-img")
-    .forEach(function (img) {
-      img.addEventListener("click", function () {
-        if (window.__worksGalleryDragMoved) return;
-        var rowEl = img.closest("[data-linked-row]");
-        if (!rowEl) return;
-        var slide = img.closest(".works-page__carousel-slide");
-        var startIndex = slide ? parseInt(slide.dataset.galleryIndex || "0", 10) : 0;
-        open(rowEl, isNaN(startIndex) ? 0 : startIndex);
-      });
-    });
+  document.addEventListener("click", function (event) {
+    var btn = event.target.closest("[data-carousel-fullscreen]");
+    if (!btn) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    var slide = btn.closest(".works-page__carousel-slide");
+    var rowEl = btn.closest("[data-linked-row]");
+    if (!slide || !rowEl) return;
+
+    var startIndex = parseInt(slide.dataset.galleryIndex || "0", 10);
+    open(rowEl, isNaN(startIndex) ? 0 : startIndex);
+  });
+
+  window.worksOpenLightbox = open;
 
   lightbox.querySelectorAll("[data-lightbox-close]").forEach(function (el) {
     el.addEventListener("click", close);
