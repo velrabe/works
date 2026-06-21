@@ -380,6 +380,103 @@
       step(1);
     });
   }
+
+  function applyDragOffset(offset) {
+    branding.measure();
+    pitch.measure();
+    branding.track.style.transition = "none";
+    pitch.track.style.transition = "none";
+    branding.track.style.transform =
+      "translate3d(" + (branding.getTranslateX() + offset) + "px, 0, 0)";
+    pitch.track.style.transform =
+      "translate3d(" + (pitch.getTranslateX() - offset) + "px, 0, 0)";
+  }
+
+  function bindGalleryDrag() {
+    var galleryRows = document.querySelector(".works-page__showcase-gallery-rows");
+    if (!galleryRows) return;
+
+    var dragging = false;
+    var pointerId = null;
+    var startX = 0;
+    var currentOffset = 0;
+    var dragMoved = false;
+    var DRAG_THRESHOLD = 48;
+
+    window.__worksGalleryDragMoved = false;
+
+    function setDraggingState(active) {
+      branding.viewport.classList.toggle("is-dragging", active);
+      pitch.viewport.classList.toggle("is-dragging", active);
+    }
+
+    function finishDrag() {
+      if (!dragging) return;
+      dragging = false;
+      setDraggingState(false);
+
+      if (dragMoved) {
+        window.__worksGalleryDragMoved = true;
+        window.setTimeout(function () {
+          window.__worksGalleryDragMoved = false;
+        }, 0);
+      }
+
+      var delta = 0;
+      if (currentOffset < -DRAG_THRESHOLD) {
+        delta = 1;
+      } else if (currentOffset > DRAG_THRESHOLD) {
+        delta = -1;
+      }
+
+      currentOffset = 0;
+
+      if (delta) {
+        step(delta);
+      } else {
+        applyRows(true);
+      }
+    }
+
+    galleryRows.addEventListener("pointerdown", function (event) {
+      if (animating || event.button > 0) return;
+      if (event.target.closest(".works-page__carousel-control")) return;
+
+      dragging = true;
+      dragMoved = false;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      currentOffset = 0;
+      setDraggingState(true);
+
+      if (galleryRows.setPointerCapture) {
+        galleryRows.setPointerCapture(event.pointerId);
+      }
+    });
+
+    galleryRows.addEventListener("pointermove", function (event) {
+      if (!dragging || event.pointerId !== pointerId) return;
+
+      currentOffset = event.clientX - startX;
+      if (Math.abs(currentOffset) > 6) {
+        dragMoved = true;
+      }
+
+      applyDragOffset(currentOffset);
+    });
+
+    galleryRows.addEventListener("pointerup", function (event) {
+      if (event.pointerId !== pointerId) return;
+      finishDrag();
+    });
+
+    galleryRows.addEventListener("pointercancel", function (event) {
+      if (event.pointerId !== pointerId) return;
+      finishDrag();
+    });
+  }
+
+  bindGalleryDrag();
 })();
 
 (function () {
@@ -589,6 +686,7 @@
     .querySelectorAll("[data-linked-row] .works-page__carousel-img")
     .forEach(function (img) {
       img.addEventListener("click", function () {
+        if (window.__worksGalleryDragMoved) return;
         var rowEl = img.closest("[data-linked-row]");
         if (!rowEl) return;
         var slide = img.closest(".works-page__carousel-slide");
