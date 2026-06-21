@@ -28,6 +28,120 @@
     return slide.offsetWidth + gap;
   }
 
+  function getTrackAlign(track) {
+    var showcase = track.closest(".works-page__showcase");
+    if (!showcase) return "center";
+    if (showcase.id === "branding") return "start";
+    if (showcase.id === "pitch-deks") return "end";
+    return "center";
+  }
+
+  function getActiveSlideIndex(track, align) {
+    var slides = track.querySelectorAll(".works-page__carousel-slide");
+    if (!slides.length) return 0;
+
+    var target =
+      align === "end"
+        ? track.scrollLeft + track.clientWidth
+        : track.scrollLeft;
+    var closestIndex = 0;
+    var closestDistance = Infinity;
+
+    slides.forEach(function (slide, index) {
+      var slidePoint =
+        align === "end"
+          ? slide.offsetLeft + slide.offsetWidth
+          : slide.offsetLeft;
+      var distance = Math.abs(slidePoint - target);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    return closestIndex;
+  }
+
+  function scrollTrackToIndex(track, index, align, behavior) {
+    var slides = track.querySelectorAll(".works-page__carousel-slide");
+    var slide = slides[index];
+    if (!slide) return;
+
+    var left =
+      align === "end"
+        ? slide.offsetLeft + slide.offsetWidth - track.clientWidth
+        : slide.offsetLeft;
+
+    track.scrollTo({
+      left: Math.max(0, left),
+      behavior: behavior || "smooth",
+    });
+  }
+
+  function updateActiveSlides(track) {
+    var slides = track.querySelectorAll(".works-page__carousel-slide");
+    if (!slides.length) return;
+
+    var align = getTrackAlign(track);
+    var activeIndex = getActiveSlideIndex(track, align);
+
+    slides.forEach(function (slide, index) {
+      slide.classList.toggle("is-active", index === activeIndex);
+    });
+
+    return activeIndex;
+  }
+
+  function initCarouselCaptions() {
+    document.querySelectorAll(".works-page__carousel-slide").forEach(function (slide) {
+      if (slide.querySelector(".works-page__carousel-slide-inner")) return;
+
+      var img = slide.querySelector(".works-page__carousel-img");
+      if (!img) return;
+
+      var inner = document.createElement("div");
+      inner.className = "works-page__carousel-slide-inner";
+
+      var captionWrap = document.createElement("div");
+      captionWrap.className = "works-page__carousel-slide-caption-wrap";
+
+      var captionTextWrap = document.createElement("div");
+      captionTextWrap.className = "works-page__carousel-slide-caption-text-wrap";
+
+      var caption = document.createElement("p");
+      caption.className = "works-page__carousel-slide-caption";
+      caption.textContent = img.getAttribute("alt") || "";
+
+      captionTextWrap.appendChild(caption);
+      captionWrap.appendChild(captionTextWrap);
+      slide.insertBefore(inner, img);
+      inner.appendChild(img);
+      inner.appendChild(captionWrap);
+    });
+  }
+
+  var brandingTrack = document.querySelector("#branding .works-page__carousel-track");
+  var pitchTrack = document.querySelector("#pitch-deks .works-page__carousel-track");
+  var syncing = false;
+  var syncTimer = null;
+
+  function syncPitchToBranding(behavior) {
+    if (!brandingTrack || !pitchTrack || syncing) return;
+
+    var brandingIndex = getActiveSlideIndex(brandingTrack, "start");
+    var pitchSlides = pitchTrack.querySelectorAll(".works-page__carousel-slide");
+    var pitchIndex = Math.max(0, pitchSlides.length - 1 - brandingIndex);
+
+    syncing = true;
+    scrollTrackToIndex(pitchTrack, pitchIndex, "end", behavior || "smooth");
+    updateActiveSlides(pitchTrack);
+
+    window.clearTimeout(syncTimer);
+    syncTimer = window.setTimeout(function () {
+      syncing = false;
+    }, 450);
+  }
+
   function scrollCarousel(btn, direction) {
     var showcase = btn.closest(".works-page__showcase");
     var carousel = showcase
@@ -38,37 +152,39 @@
     if (!track) return;
     var slide = track.querySelector(".works-page__carousel-slide");
     track.scrollBy({ left: direction * getSlideStep(slide), behavior: "smooth" });
+
+    if (track === brandingTrack) {
+      window.setTimeout(function () {
+        syncPitchToBranding("smooth");
+      }, 80);
+    }
   }
 
-  function updateActiveSlides(track) {
-    var slides = track.querySelectorAll(".works-page__carousel-slide");
-    if (!slides.length) return;
-
-    var trackRect = track.getBoundingClientRect();
-    var center = trackRect.left + trackRect.width / 2;
-    var closest = null;
-    var closestDistance = Infinity;
-
-    slides.forEach(function (slide) {
-      var rect = slide.getBoundingClientRect();
-      var slideCenter = rect.left + rect.width / 2;
-      var distance = Math.abs(center - slideCenter);
-      slide.classList.toggle("is-active", false);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closest = slide;
-      }
-    });
-
-    if (closest) closest.classList.add("is-active");
-  }
+  initCarouselCaptions();
 
   document.querySelectorAll(".works-page__carousel-track").forEach(function (track) {
     updateActiveSlides(track);
-    track.addEventListener("scroll", function () {
-      updateActiveSlides(track);
-    }, { passive: true });
+
+    track.addEventListener(
+      "scroll",
+      function () {
+        updateActiveSlides(track);
+
+        if (track === brandingTrack && !syncing) {
+          syncPitchToBranding("smooth");
+        }
+      },
+      { passive: true }
+    );
   });
+
+  if (pitchTrack) {
+    var pitchSlides = pitchTrack.querySelectorAll(".works-page__carousel-slide");
+    if (pitchSlides.length) {
+      scrollTrackToIndex(pitchTrack, pitchSlides.length - 1, "end", "auto");
+      updateActiveSlides(pitchTrack);
+    }
+  }
 
   document.querySelectorAll("[data-carousel-prev]").forEach(function (btn) {
     btn.addEventListener("click", function () {

@@ -636,22 +636,20 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
   width: 100%;
   padding-top: 0;
   padding-bottom: 0;
   padding-left: 0;
   padding-right: 0;
-  gap: 2rem;
 }
 
 .works-page__case-cover-tag-wrap {
   display: flex;
   flex-direction: column;
   padding-top: 0;
-  padding-bottom: 0;
+  padding-bottom: 0.5rem;
   padding-left: 0;
-  padding-right: 0;
+  padding-right: 0.5rem;
 }
 
 .works-page__case-cover-tag {
@@ -674,13 +672,14 @@
 .works-page__case-cover-quote-wrap {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   width: 50%;
   min-height: 0;
   padding-top: 0;
   padding-bottom: 0;
   padding-left: 0;
   padding-right: 1rem;
+  gap: 2rem;
 }
 
 .works-page__case-cover-quote-text {
