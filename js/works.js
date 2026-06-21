@@ -434,13 +434,45 @@
     var baseBrandingX = 0;
     var basePitchX = 0;
     var dragging = false;
+    var dragRow = "branding";
     var DRAG_THRESHOLD = 48;
+
+    function getDragRowFromTarget(target) {
+      if (pitchShell.contains(target)) {
+        return "pitch";
+      }
+      return "branding";
+    }
+
+    function applyDragTransforms(delta) {
+      if (dragRow === "pitch") {
+        branding.track.style.transform =
+          "translate3d(" + (baseBrandingX - delta) + "px, 0, 0)";
+        pitch.track.style.transform =
+          "translate3d(" + (basePitchX + delta) + "px, 0, 0)";
+        return;
+      }
+
+      branding.track.style.transform =
+        "translate3d(" + (baseBrandingX + delta) + "px, 0, 0)";
+      pitch.track.style.transform =
+        "translate3d(" + (basePitchX - delta) + "px, 0, 0)";
+    }
+
+    function dragStepDelta(delta) {
+      var stepDelta = delta > 0 ? -1 : 1;
+      if (dragRow === "pitch") {
+        stepDelta = -stepDelta;
+      }
+      return stepDelta;
+    }
 
     function onPointerDown(event) {
       if (animating) return;
       if (event.target.closest("[data-carousel-fullscreen]")) return;
 
       dragging = true;
+      dragRow = getDragRowFromTarget(event.target);
       deltaX = 0;
       startX = event.clientX;
       branding.measure();
@@ -457,10 +489,7 @@
       deltaX = event.clientX - startX;
       branding.track.style.transition = "none";
       pitch.track.style.transition = "none";
-      branding.track.style.transform =
-        "translate3d(" + (baseBrandingX + deltaX) + "px, 0, 0)";
-      pitch.track.style.transform =
-        "translate3d(" + (basePitchX - deltaX) + "px, 0, 0)";
+      applyDragTransforms(deltaX);
     }
 
     function onPointerUp(event) {
@@ -474,7 +503,7 @@
       }
 
       if (Math.abs(deltaX) >= DRAG_THRESHOLD) {
-        step(deltaX > 0 ? -1 : 1);
+        step(dragStepDelta(deltaX));
         return;
       }
 

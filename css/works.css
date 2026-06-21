@@ -429,8 +429,8 @@ body {
 
 .works-page__carousel-control-icon {
   display: block;
-  width: 1em;
-  height: 1em;
+  width: 1.5rem;
+  height: 1.5rem;
   color: var(--works-text);
 }
 
