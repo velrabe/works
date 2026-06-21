@@ -410,24 +410,14 @@ body {
   margin-right: 0;
   overflow: hidden;
   z-index: 2;
-  transform: translateX(0);
-  transition: transform 0.35s ease;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev {
   left: 0;
 }
 
-.works-page__showcase-gallery-frame > .works-page__carousel-control--prev:hover {
-  transform: translateX(0.25rem);
-}
-
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next {
   right: 0;
-}
-
-.works-page__showcase-gallery-frame > .works-page__carousel-control--next:hover {
-  transform: translateX(-0.25rem);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control::after {
@@ -439,6 +429,7 @@ body {
   left: 0;
   opacity: 1;
   pointer-events: none;
+  transition: opacity 0.35s ease;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev::after {
@@ -455,7 +446,7 @@ body {
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control:hover::after {
-  opacity: 1;
+  opacity: 0;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control::before {
@@ -470,6 +461,29 @@ body {
   justify-content: center;
   position: relative;
   z-index: 1;
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control .works-page__carousel-control-icon-wrap {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  transform: translateX(0);
+  transition:
+    background-color 0.35s ease,
+    transform 0.35s ease;
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control:hover .works-page__carousel-control-icon-wrap {
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control--prev:hover .works-page__carousel-control-icon-wrap {
+  transform: translateX(0.25rem);
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control--next:hover .works-page__carousel-control-icon-wrap {
+  transform: translateX(-0.25rem);
 }
 
 .works-page__carousel-control-icon {
