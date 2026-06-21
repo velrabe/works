@@ -38,6 +38,7 @@ body {
   font-family: var(--works-font);
   color: var(--works-text);
   background-color: var(--works-bg);
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -427,17 +428,17 @@ body {
   right: 0;
   bottom: 0;
   left: 0;
-  opacity: 1;
+  opacity: 0;
   pointer-events: none;
   transition: opacity 0.35s ease;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev::after {
-  background-image: linear-gradient(to right, rgba(247, 247, 245, 0.9) 0%, rgba(247, 247, 245, 0) 100%);
+  background-image: linear-gradient(to right, rgba(247, 247, 245, 1) 0%, rgba(247, 247, 245, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next::after {
-  background-image: linear-gradient(to left, rgba(247, 247, 245, 0.9) 0%, rgba(247, 247, 245, 0) 100%);
+  background-image: linear-gradient(to left, rgba(247, 247, 245, 1) 0%, rgba(247, 247, 245, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control:hover {
@@ -446,7 +447,7 @@ body {
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control:hover::after {
-  opacity: 0;
+  opacity: 1;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control::before {
@@ -464,18 +465,12 @@ body {
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control .works-page__carousel-control-icon-wrap {
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 999rem;
-  background-color: rgba(255, 255, 255, 0.8);
-  transform: translateX(0);
-  transition:
-    background-color 0.35s ease,
-    transform 0.35s ease;
-}
-
-.works-page__showcase-gallery-frame > .works-page__carousel-control:hover .works-page__carousel-control-icon-wrap {
   background-color: rgba(255, 255, 255, 1);
+  transform: translateX(0);
+  transition: transform 0.35s ease;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev:hover .works-page__carousel-control-icon-wrap {
@@ -604,8 +599,7 @@ body {
   border-radius: var(--works-radius-sm);
   overflow: hidden;
   background-color: var(--works-surface);
-  opacity: 0.4;
-  transition: opacity 0.3s cubic-bezier(0.34, 1.25, 0.64, 1);
+  opacity: 1;
 }
 .works-page__carousel-slide.is-active {
   opacity: 1;
