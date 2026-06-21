@@ -74,7 +74,7 @@
   };
 
   function capitalizeTagLabel(tag) {
-    return tag.replace(/(^|[\s-/])(\p{L})/gu, function (_match, sep, letter) {
+    return tag.replace(/(^|[\s\-/]+)([a-z])/gi, function (_match, sep, letter) {
       return sep + letter.toUpperCase();
     });
   }
