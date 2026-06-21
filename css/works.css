@@ -2296,6 +2296,54 @@ html.works-modal-open {
 }
 
 @media (max-width: 47.9375rem) {
+  .works-page__offerings {
+    padding-bottom: clamp(2rem, 8vw, 3rem);
+  }
+
+  .works-page__offerings-cloud {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.625rem;
+    border-top: 0.0625rem solid var(--works-border);
+    border-bottom: 0.0625rem solid var(--works-border);
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+  }
+
+  .works-page__offerings-item-wrap {
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+
+  .works-page__offerings-item {
+    flex-direction: row;
+    align-items: flex-start;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--works-muted);
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .works-page__offerings-item::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 0.25rem;
+    height: 0.25rem;
+    border-radius: 999rem;
+    background-color: var(--works-text);
+    opacity: 0.45;
+    margin-top: 0.625rem;
+    margin-right: 0.625rem;
+  }
+
+  .works-page__section-grid,
+  .works-page__section-row {
+    gap: 1rem;
+  }
+
   .works-page__card-head {
     padding-top: 1.25rem;
     padding-right: 1rem;
@@ -2310,9 +2358,14 @@ html.works-modal-open {
   }
 
   .works-page__card-body {
+    gap: 1rem;
     padding-right: 1rem;
     padding-bottom: 1rem;
     padding-left: 1rem;
+  }
+
+  .works-page__media {
+    padding-bottom: 0;
   }
 
   .works-page__card--cover-first > .works-page__case-cover {
