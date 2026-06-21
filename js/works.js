@@ -22,7 +22,8 @@
 
 (function () {
   var SLIDE_COUNT = 6;
-  var WAGONS_IN_DOM = 2;
+  var WAGONS_IN_DOM = 3;
+  var START_WAGON = 1;
   var TRANSITION_MS = 350;
 
   function initSlideCaptions(root) {
@@ -55,11 +56,12 @@
     inner.appendChild(captionWrap);
   }
 
-  function CarouselRow(shell, reverseOrder) {
+  function CarouselRow(shell, reverseOrder, invertMotion) {
     this.shell = shell;
     this.viewport = shell.querySelector("[data-carousel-viewport]");
     this.track = shell.querySelector("[data-carousel-viewport] [data-carousel-track]");
     this.reverseOrder = reverseOrder;
+    this.invertMotion = invertMotion;
     this.templates = Array.from(
       this.track.querySelectorAll(".works-page__carousel-slide")
     )
@@ -168,7 +170,11 @@
   CarouselRow.prototype.getTranslateX = function () {
     var slide = this.track.children[this.domIndex];
     if (!slide) return 0;
-    return this.centerX - (slide.offsetLeft + slide.offsetWidth / 2);
+    var slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
+    if (this.invertMotion) {
+      return slideCenter - this.centerX;
+    }
+    return this.centerX - slideCenter;
   };
 
   CarouselRow.prototype.applyTransform = function (animate) {
@@ -192,8 +198,8 @@
   var nextBtn = document.querySelector("[data-linked-gallery-next]");
   if (!brandingShell || !pitchShell) return;
 
-  var branding = new CarouselRow(brandingShell, false);
-  var pitch = new CarouselRow(pitchShell, true);
+  var branding = new CarouselRow(brandingShell, false, false);
+  var pitch = new CarouselRow(pitchShell, true, true);
   var rows = [branding, pitch];
   var logicalIndex = 0;
   var animating = false;
@@ -209,7 +215,7 @@
   function initGallery() {
     rows.forEach(function (row) {
       row.buildWagons();
-      row.domIndex = logicalIndex;
+      row.domIndex = SLIDE_COUNT * START_WAGON + logicalIndex;
     });
 
     requestAnimationFrame(function () {
@@ -239,9 +245,10 @@
   }
 
   function recycleRows(delta, prepended) {
-    if (delta > 0 && logicalIndex === 0 && branding.domIndex >= SLIDE_COUNT) {
+    if (delta > 0 && branding.domIndex >= SLIDE_COUNT * (WAGONS_IN_DOM - 1)) {
       rows.forEach(function (row) {
         row.removeFirstWagon();
+        row.appendWagon();
       });
     }
 
