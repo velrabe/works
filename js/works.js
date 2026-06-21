@@ -472,12 +472,15 @@
 
   CarouselRow.prototype.buildMobileSlides = function () {
     var frag = document.createDocumentFragment();
+    var wagon;
     var i;
 
     this.track.textContent = "";
 
-    for (i = 0; i < this.slideCount; i += 1) {
-      frag.appendChild(this.cloneSlide(i));
+    for (wagon = 0; wagon < WAGONS_IN_DOM; wagon += 1) {
+      for (i = 0; i < this.slideCount; i += 1) {
+        frag.appendChild(this.cloneSlide(i));
+      }
     }
 
     this.track.appendChild(frag);
@@ -552,6 +555,11 @@
   var logicalIndex = 0;
   var animating = false;
   var galleryMode = null;
+  var mobileDriverRow = null;
+  var mobileDriverTimer = null;
+  var mobileMirrorBase = 0;
+  var mobilePositioning = false;
+  var mobileRefreshTimer = null;
 
   function applyRows(animate) {
     if (isMobileGallery()) return;
@@ -666,6 +674,37 @@
       });
   }
 
+  function positiveModulo(value, size) {
+    return ((value % size) + size) % size;
+  }
+
+  function getOtherMobileRow(row) {
+    return row === branding ? pitch : branding;
+  }
+
+  function getMobileSlideCenter(row, index) {
+    var slide = row.track.children[index];
+    if (!slide) return 0;
+    return slide.offsetLeft + slide.offsetWidth / 2;
+  }
+
+  function getMobileScrollForIndex(row, index) {
+    return getMobileSlideCenter(row, index) - row.viewport.clientWidth / 2;
+  }
+
+  function getMobileWagonSpan(row) {
+    var first = row.track.children[0];
+    var next = row.track.children[row.slideCount];
+    if (!first || !next) return 0;
+    return next.offsetLeft - first.offsetLeft;
+  }
+
+  function getMobileMirrorBase() {
+    var brandingIndex = branding.slideCount * START_WAGON;
+    var pitchIndex = getPitchPairOffset() - brandingIndex;
+    return getMobileSlideCenter(branding, brandingIndex) + getMobileSlideCenter(pitch, pitchIndex);
+  }
+
   function updateMobileActiveSlide(row) {
     var viewport = row.viewport;
     var center = viewport.scrollLeft + viewport.clientWidth / 2;
@@ -683,8 +722,72 @@
     });
 
     row.domIndex = nearest;
-    row.logicalIndex = nearest % row.slideCount;
+    row.logicalIndex = positiveModulo(nearest, row.slideCount);
     row.setActive();
+  }
+
+  function updateMobileActiveSlides() {
+    rows.forEach(updateMobileActiveSlide);
+  }
+
+  function setMobileDriver(row) {
+    mobileDriverRow = row;
+    window.clearTimeout(mobileDriverTimer);
+    mobileDriverTimer = window.setTimeout(function () {
+      mobileDriverRow = null;
+    }, 220);
+  }
+
+  function setMobileScrollLeft(row, scrollLeft) {
+    row.viewport.scrollLeft = Math.max(
+      0,
+      Math.min(scrollLeft, row.viewport.scrollWidth - row.viewport.clientWidth)
+    );
+  }
+
+  function syncMobileMirrorFrom(sourceRow) {
+    var targetRow = getOtherMobileRow(sourceRow);
+    var sourceCenter = sourceRow.viewport.scrollLeft + sourceRow.viewport.clientWidth / 2;
+    var targetCenter = mobileMirrorBase - sourceCenter;
+
+    setMobileScrollLeft(targetRow, targetCenter - targetRow.viewport.clientWidth / 2);
+  }
+
+  function recenterMobilePairFrom(sourceRow) {
+    var direction = 0;
+    var targetRow = getOtherMobileRow(sourceRow);
+
+    if (sourceRow.domIndex < sourceRow.slideCount) {
+      direction = 1;
+    } else if (sourceRow.domIndex >= sourceRow.slideCount * (WAGONS_IN_DOM - 1)) {
+      direction = -1;
+    }
+
+    if (!direction) return;
+
+    mobilePositioning = true;
+    setMobileScrollLeft(
+      sourceRow,
+      sourceRow.viewport.scrollLeft + direction * getMobileWagonSpan(sourceRow)
+    );
+    setMobileScrollLeft(
+      targetRow,
+      targetRow.viewport.scrollLeft - direction * getMobileWagonSpan(targetRow)
+    );
+    updateMobileActiveSlides();
+
+    requestAnimationFrame(function () {
+      mobilePositioning = false;
+    });
+  }
+
+  function handleMobileRowScroll(row) {
+    if (!isMobileGallery() || mobilePositioning) return;
+
+    updateMobileActiveSlide(row);
+    syncMobileMirrorFrom(row);
+    updateMobileActiveSlide(getOtherMobileRow(row));
+    recenterMobilePairFrom(row);
   }
 
   function bindMobileNativeRow(row) {
@@ -694,16 +797,47 @@
     var ticking = false;
 
     row.viewport.addEventListener(
+      "pointerdown",
+      function () {
+        if (!isMobileGallery()) return;
+        setMobileDriver(row);
+      },
+      { passive: true }
+    );
+
+    row.viewport.addEventListener(
+      "touchstart",
+      function () {
+        if (!isMobileGallery()) return;
+        setMobileDriver(row);
+      },
+      { passive: true }
+    );
+
+    row.viewport.addEventListener(
+      "wheel",
+      function () {
+        if (!isMobileGallery()) return;
+        setMobileDriver(row);
+      },
+      { passive: true }
+    );
+
+    row.viewport.addEventListener(
       "scroll",
       function () {
         if (!isMobileGallery()) return;
+        if (mobilePositioning) return;
+        if (mobileDriverRow && mobileDriverRow !== row) return;
+
+        setMobileDriver(row);
         clearMobileSlideReveals();
 
         if (ticking) return;
         ticking = true;
 
         requestAnimationFrame(function () {
-          updateMobileActiveSlide(row);
+          handleMobileRowScroll(row);
           ticking = false;
         });
       },
@@ -733,9 +867,43 @@
     rows.forEach(function (row) {
       row.buildMobileSlides();
       bindMobileNativeRow(row);
-      row.viewport.scrollLeft = 0;
-      updateMobileActiveSlide(row);
     });
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        mobilePositioning = true;
+        mobileMirrorBase = getMobileMirrorBase();
+        branding.domIndex = branding.slideCount * START_WAGON + logicalIndex;
+        syncPitchPair();
+        setMobileScrollLeft(branding, getMobileScrollForIndex(branding, branding.domIndex));
+        setMobileScrollLeft(pitch, getMobileScrollForIndex(pitch, pitch.domIndex));
+        updateMobileActiveSlides();
+
+        requestAnimationFrame(function () {
+          mobilePositioning = false;
+        });
+      });
+    });
+  }
+
+  function refreshMobileGallery() {
+    if (!isMobileGallery() || galleryMode !== "mobile") return;
+
+    window.clearTimeout(mobileRefreshTimer);
+    mobileRefreshTimer = window.setTimeout(function () {
+      mobilePositioning = true;
+      logicalIndex = branding.logicalIndex || 0;
+      mobileMirrorBase = getMobileMirrorBase();
+      branding.domIndex = branding.slideCount * START_WAGON + logicalIndex;
+      syncPitchPair();
+      setMobileScrollLeft(branding, getMobileScrollForIndex(branding, branding.domIndex));
+      setMobileScrollLeft(pitch, getMobileScrollForIndex(pitch, pitch.domIndex));
+      updateMobileActiveSlides();
+
+      requestAnimationFrame(function () {
+        mobilePositioning = false;
+      });
+    }, 80);
   }
 
   function setGalleryMode() {
@@ -743,6 +911,9 @@
     if (galleryMode === nextMode) return;
 
     galleryMode = nextMode;
+    mobileDriverRow = null;
+    window.clearTimeout(mobileDriverTimer);
+    window.clearTimeout(mobileRefreshTimer);
     clearMobileSlideReveals();
 
     if (galleryMode === "mobile") {
@@ -762,7 +933,10 @@
 
   if (typeof ResizeObserver !== "undefined") {
     var resizeObserver = new ResizeObserver(function () {
-      if (isMobileGallery()) return;
+      if (isMobileGallery()) {
+        refreshMobileGallery();
+        return;
+      }
       if (animating) return;
       applyRows(false);
     });
@@ -772,7 +946,10 @@
   } else {
     window.addEventListener("resize", function () {
       setGalleryMode();
-      if (isMobileGallery()) return;
+      if (isMobileGallery()) {
+        refreshMobileGallery();
+        return;
+      }
       if (animating) return;
       applyRows(false);
     });
