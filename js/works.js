@@ -26,36 +26,33 @@
   var TRANSITION_MS = 350;
 
   function initSlideCaptions(root) {
-    root.querySelectorAll(".works-page__carousel-slide").forEach(function (slide) {
-      if (slide.querySelector(".works-page__carousel-slide-inner")) return;
-
-      var img = slide.querySelector(".works-page__carousel-img");
-      if (!img) return;
-
-      var inner = document.createElement("div");
-      inner.className = "works-page__carousel-slide-inner";
-
-      var captionWrap = document.createElement("div");
-      captionWrap.className = "works-page__carousel-slide-caption-wrap";
-
-      var captionTextWrap = document.createElement("div");
-      captionTextWrap.className = "works-page__carousel-slide-caption-text-wrap";
-
-      var caption = document.createElement("p");
-      caption.className = "works-page__carousel-slide-caption";
-      caption.textContent = img.getAttribute("alt") || "";
-
-      captionTextWrap.appendChild(caption);
-      captionWrap.appendChild(captionTextWrap);
-      slide.insertBefore(inner, img);
-      inner.appendChild(img);
-      inner.appendChild(captionWrap);
-    });
+    root.querySelectorAll(".works-page__carousel-slide").forEach(initSlideCaption);
   }
 
-  function readGap(track) {
-    var style = window.getComputedStyle(track);
-    return parseFloat(style.gap || style.columnGap || "0") || 0;
+  function initSlideCaption(slide) {
+    if (slide.querySelector(".works-page__carousel-slide-inner")) return;
+
+    var img = slide.querySelector(".works-page__carousel-img");
+    if (!img) return;
+
+    var inner = document.createElement("div");
+    inner.className = "works-page__carousel-slide-inner";
+
+    var captionWrap = document.createElement("div");
+    captionWrap.className = "works-page__carousel-slide-caption-wrap";
+
+    var captionTextWrap = document.createElement("div");
+    captionTextWrap.className = "works-page__carousel-slide-caption-text-wrap";
+
+    var caption = document.createElement("p");
+    caption.className = "works-page__carousel-slide-caption";
+    caption.textContent = img.getAttribute("alt") || "";
+
+    captionTextWrap.appendChild(caption);
+    captionWrap.appendChild(captionTextWrap);
+    slide.insertBefore(inner, img);
+    inner.appendChild(img);
+    inner.appendChild(captionWrap);
   }
 
   function CarouselRow(shell, reverseOrder) {
@@ -71,8 +68,7 @@
         return slide.cloneNode(true);
       });
     this.domIndex = 0;
-    this.stepPx = 0;
-    this.centerOffset = 0;
+    this.centerX = 0;
   }
 
   CarouselRow.prototype.getSlideOrder = function () {
@@ -109,6 +105,7 @@
     }
 
     this.track.appendChild(frag);
+    initSlideCaptions(this.shell);
   };
 
   CarouselRow.prototype.prependWagon = function () {
@@ -121,6 +118,7 @@
     }
 
     this.track.insertBefore(frag, this.track.firstChild);
+    initSlideCaptions(this.shell);
     this.domIndex += SLIDE_COUNT;
     this.applyTransform(false);
   };
@@ -163,19 +161,18 @@
   };
 
   CarouselRow.prototype.measure = function () {
-    var slide = this.track.children[this.domIndex] || this.track.children[0];
-    if (!slide) return;
-
-    var slideWidth = slide.getBoundingClientRect().width;
-    var gap = readGap(this.track);
     var viewportWidth = this.viewport.getBoundingClientRect().width;
+    this.centerX = viewportWidth / 2;
+  };
 
-    this.stepPx = slideWidth + gap;
-    this.centerOffset = (viewportWidth - slideWidth) / 2;
+  CarouselRow.prototype.getTranslateX = function () {
+    var slide = this.track.children[this.domIndex];
+    if (!slide) return 0;
+    return this.centerX - (slide.offsetLeft + slide.offsetWidth / 2);
   };
 
   CarouselRow.prototype.applyTransform = function (animate) {
-    var x = this.centerOffset - this.domIndex * this.stepPx;
+    var x = this.getTranslateX();
     this.track.style.transition = animate
       ? "transform " + TRANSITION_MS + "ms cubic-bezier(0.4, 0, 0.2, 1)"
       : "none";
@@ -214,7 +211,12 @@
       row.buildWagons();
       row.domIndex = logicalIndex;
     });
-    applyRows(false);
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        applyRows(false);
+      });
+    });
   }
 
   function waitRowsTransition(done) {
@@ -296,10 +298,20 @@
 
   initGallery();
 
-  window.addEventListener("resize", function () {
-    if (animating) return;
-    applyRows(false);
-  });
+  if (typeof ResizeObserver !== "undefined") {
+    var resizeObserver = new ResizeObserver(function () {
+      if (animating) return;
+      applyRows(false);
+    });
+    rows.forEach(function (row) {
+      resizeObserver.observe(row.viewport);
+    });
+  } else {
+    window.addEventListener("resize", function () {
+      if (animating) return;
+      applyRows(false);
+    });
+  }
 
   if (prevBtn) {
     prevBtn.addEventListener("click", function () {
