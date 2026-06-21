@@ -280,6 +280,21 @@
     pitch.domIndex = PITCH_PAIR_OFFSET - branding.domIndex;
   }
 
+  function applyPitchStep(delta) {
+    var targetPitch = pitch.domIndex - delta;
+
+    while (targetPitch < 0) {
+      pitch.prependWagon();
+      targetPitch += SLIDE_COUNT;
+    }
+
+    while (targetPitch >= pitch.track.children.length) {
+      pitch.appendWagon();
+    }
+
+    pitch.domIndex = targetPitch;
+  }
+
   var logicalIndex = 0;
   var animating = false;
 
@@ -359,25 +374,18 @@
     var prepended = delta < 0 && targetDom < 0;
 
     if (prepended) {
-      rows.forEach(function (row) {
-        row.prependWagon();
-      });
+      branding.prependWagon();
       targetDom = branding.domIndex + delta;
     }
 
-    if (
-      delta > 0 &&
-      targetDom >= branding.track.children.length - SLIDE_COUNT
-    ) {
-      rows.forEach(function (row) {
-        row.ensureWagonBuffer();
-      });
+    if (delta > 0 && targetDom >= branding.track.children.length) {
+      branding.appendWagon();
     }
 
     logicalIndex = (logicalIndex + delta + SLIDE_COUNT) % SLIDE_COUNT;
 
     branding.domIndex = targetDom;
-    syncPitchPair();
+    applyPitchStep(delta);
 
     applyRows(true);
 
