@@ -38,7 +38,7 @@ body {
   font-family: var(--works-font);
   color: var(--works-text);
   background-color: var(--works-bg);
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
