@@ -236,7 +236,6 @@
     });
   });
 })();
-})();
 
 (function () {
   var openButtons = document.querySelectorAll("[data-modal-open]");
