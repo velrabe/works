@@ -560,6 +560,9 @@
   var mobileMirrorBase = 0;
   var mobilePositioning = false;
   var mobileRefreshTimer = null;
+  var mobileMirrorAnimationFrame = null;
+  var MOBILE_MIRROR_EASE = 0.18;
+  var MOBILE_MIRROR_SETTLE = 3;
 
   function applyRows(animate) {
     if (isMobileGallery()) return;
@@ -738,11 +741,74 @@
     }, 220);
   }
 
-  function setMobileScrollLeft(row, scrollLeft) {
-    row.viewport.scrollLeft = Math.max(
+  function getClampedMobileScrollLeft(row, scrollLeft) {
+    return Math.max(
       0,
       Math.min(scrollLeft, row.viewport.scrollWidth - row.viewport.clientWidth)
     );
+  }
+
+  function setMobileScrollLeft(row, scrollLeft) {
+    row.viewport.scrollLeft = getClampedMobileScrollLeft(row, scrollLeft);
+  }
+
+  function clearMobileMirrorAnimation() {
+    if (mobileMirrorAnimationFrame) {
+      window.cancelAnimationFrame(mobileMirrorAnimationFrame);
+      mobileMirrorAnimationFrame = null;
+    }
+
+    rows.forEach(function (row) {
+      row.mobileMirrorTarget = null;
+      row.mobileMirrorSettling = false;
+      row.viewport.classList.remove("is-mirror-syncing");
+    });
+  }
+
+  function animateMobileMirror() {
+    var hasTarget = false;
+
+    rows.forEach(function (row) {
+      if (row.mobileMirrorTarget === null || row.mobileMirrorTarget === undefined) {
+        return;
+      }
+
+      hasTarget = true;
+      row.viewport.classList.add("is-mirror-syncing");
+
+      var current = row.viewport.scrollLeft;
+      var target = getClampedMobileScrollLeft(row, row.mobileMirrorTarget);
+      var distance = target - current;
+
+      if (Math.abs(distance) <= MOBILE_MIRROR_SETTLE) {
+        row.mobileMirrorSettling = true;
+        setMobileScrollLeft(row, target);
+        row.mobileMirrorTarget = null;
+        row.viewport.classList.remove("is-mirror-syncing");
+        updateMobileActiveSlide(row);
+        requestAnimationFrame(function () {
+          row.mobileMirrorSettling = false;
+        });
+        return;
+      }
+
+      setMobileScrollLeft(row, current + distance * MOBILE_MIRROR_EASE);
+      updateMobileActiveSlide(row);
+    });
+
+    if (hasTarget) {
+      mobileMirrorAnimationFrame = window.requestAnimationFrame(animateMobileMirror);
+    } else {
+      mobileMirrorAnimationFrame = null;
+    }
+  }
+
+  function setMobileMirrorTarget(row, scrollLeft) {
+    row.mobileMirrorTarget = getClampedMobileScrollLeft(row, scrollLeft);
+
+    if (!mobileMirrorAnimationFrame) {
+      mobileMirrorAnimationFrame = window.requestAnimationFrame(animateMobileMirror);
+    }
   }
 
   function syncMobileMirrorFrom(sourceRow) {
@@ -750,7 +816,7 @@
     var sourceCenter = sourceRow.viewport.scrollLeft + sourceRow.viewport.clientWidth / 2;
     var targetCenter = mobileMirrorBase - sourceCenter;
 
-    setMobileScrollLeft(targetRow, targetCenter - targetRow.viewport.clientWidth / 2);
+    setMobileMirrorTarget(targetRow, targetCenter - targetRow.viewport.clientWidth / 2);
   }
 
   function recenterMobilePairFrom(sourceRow) {
@@ -765,6 +831,7 @@
 
     if (!direction) return;
 
+    clearMobileMirrorAnimation();
     mobilePositioning = true;
     setMobileScrollLeft(
       sourceRow,
@@ -828,6 +895,8 @@
       function () {
         if (!isMobileGallery()) return;
         if (mobilePositioning) return;
+        if (row.mobileMirrorSettling) return;
+        if (row.mobileMirrorTarget !== null && row.mobileMirrorTarget !== undefined) return;
         if (mobileDriverRow && mobileDriverRow !== row) return;
 
         setMobileDriver(row);
@@ -891,6 +960,7 @@
 
     window.clearTimeout(mobileRefreshTimer);
     mobileRefreshTimer = window.setTimeout(function () {
+      clearMobileMirrorAnimation();
       mobilePositioning = true;
       logicalIndex = branding.logicalIndex || 0;
       mobileMirrorBase = getMobileMirrorBase();
@@ -914,6 +984,7 @@
     mobileDriverRow = null;
     window.clearTimeout(mobileDriverTimer);
     window.clearTimeout(mobileRefreshTimer);
+    clearMobileMirrorAnimation();
     clearMobileSlideReveals();
 
     if (galleryMode === "mobile") {

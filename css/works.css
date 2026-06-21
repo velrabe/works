@@ -2296,6 +2296,31 @@ html.works-modal-open {
 }
 
 @media (max-width: 47.9375rem) {
+  .works-page__card-head {
+    padding-top: 1.25rem;
+    padding-right: 1rem;
+    padding-bottom: 0.875rem;
+    padding-left: 1rem;
+  }
+
+  .works-page__card-title {
+    font-size: 1.25rem;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .works-page__card-body {
+    padding-right: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+  }
+
+  .works-page__card--cover-first > .works-page__case-cover {
+    padding-top: 1rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
   .works-page__carousel-shell {
     margin-left: calc(-1 * var(--works-gutter));
     margin-right: calc(-1 * var(--works-gutter));
@@ -2358,6 +2383,10 @@ html.works-modal-open {
 
   .works-page__carousel-viewport::-webkit-scrollbar {
     display: none;
+  }
+
+  .works-page__carousel-viewport.is-mirror-syncing {
+    scroll-snap-type: none;
   }
 
   .works-page__carousel-track {
