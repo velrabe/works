@@ -512,7 +512,36 @@
     var basePitchX = 0;
     var dragging = false;
     var dragRow = "branding";
+    var heldSlide = null;
     var DRAG_THRESHOLD = 48;
+
+    function primeSlideHoverVars(slide) {
+      var img = slide.querySelector(".works-page__carousel-img");
+      if (!img) return;
+
+      var rotate = (Math.random() * 2 - 1).toFixed(3);
+      var x = ((Math.random() * 2 - 1) * 0.5).toFixed(3);
+      var y = ((Math.random() * 2 - 1) * 0.5).toFixed(3);
+
+      img.style.setProperty("--slide-hover-rotate", rotate + "deg");
+      img.style.setProperty("--slide-hover-x", x + "rem");
+      img.style.setProperty("--slide-hover-y", y + "rem");
+    }
+
+    function setHoverHeld(slide) {
+      clearHoverHeld();
+      if (!slide) return;
+      heldSlide = slide;
+      primeSlideHoverVars(slide);
+      slide.classList.add("is-hover-held");
+    }
+
+    function clearHoverHeld() {
+      if (heldSlide) {
+        heldSlide.classList.remove("is-hover-held");
+        heldSlide = null;
+      }
+    }
 
     function getDragRowFromTarget(target) {
       if (pitchShell.contains(target)) {
@@ -550,6 +579,7 @@
 
       dragging = true;
       dragRow = getDragRowFromTarget(event.target);
+      setHoverHeld(event.target.closest(".works-page__carousel-slide"));
       deltaX = 0;
       startX = event.clientX;
       branding.measure();
@@ -573,6 +603,7 @@
       if (!dragging) return;
 
       dragging = false;
+      clearHoverHeld();
       surface.classList.remove("is-dragging");
 
       if (surface.hasPointerCapture(event.pointerId)) {
