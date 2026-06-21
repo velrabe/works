@@ -66,11 +66,11 @@
   }
 
   var ROLE_LABELS = {
-    "motion-design": "Моушен-дизайн",
+    "motion-design": "Motion-design",
     "ux/ui": "UX/UI",
-    "web-design": "Веб-дизайн",
-    "product design": "Продуктовый дизайн",
-    "graphic design": "График-дизайн",
+    "web-design": "Web-design",
+    "product design": "Product design",
+    "graphic design": "Graphic design",
   };
 
   function capitalizeTagLabel(tag) {
@@ -101,8 +101,8 @@
     tags.forEach(function (tag) {
       var lower = tag.toLowerCase();
       if (lower === "deck/slides") {
-        pushTag("Питч-дек");
-        pushTag("График-дизайн");
+        pushTag("Pitch-deck");
+        pushTag("Graphic-design");
         return;
       }
 
