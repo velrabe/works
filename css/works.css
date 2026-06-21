@@ -415,7 +415,6 @@ body {
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev {
   left: 0;
-  margin-left: 0.25rem;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev:hover {
@@ -424,7 +423,6 @@ body {
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next {
   right: 0;
-  margin-right: 0.25rem;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next:hover {
@@ -449,6 +447,11 @@ body {
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next::after {
   background-image: linear-gradient(to left, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control:hover {
+  background-color: transparent;
+  border-color: transparent;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control:hover::after {
@@ -554,7 +557,7 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   container-type: inline-size;
   container-name: carousel;
 }
@@ -659,7 +662,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-end;
+  justify-content: flex-start;
   opacity: 0;
   pointer-events: none;
   transition: opacity 1.2s cubic-bezier(0.36, 0, 0.66, -0.56);
@@ -708,10 +711,48 @@ body {
   height: 0.875rem;
 }
 
+
+.works-page__carousel-slide-caption-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 1.5rem;
+  padding-right: 1.5rem;
+  padding-bottom: 0;
+  padding-left: 1.5rem;
+}
+
+.works-page__carousel-slide-caption-preview-frame {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 0.0625rem solid var(--works-border);
+  border-radius: var(--works-radius-sm);
+}
+
+.works-page__carousel-slide-caption-preview-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+#gallery-branding .works-page__carousel-slide-caption-preview-img {
+  object-position: left center;
+}
+
+#gallery-pitch .works-page__carousel-slide-caption-preview-img {
+  object-position: right center;
+}
+
 .works-page__carousel-slide-caption-text-wrap {
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-top: auto;
   padding-top: 0;
   padding-bottom: 1.5rem;
   padding-left: 1.5rem;

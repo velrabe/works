@@ -77,6 +77,42 @@
     return wrap;
   }
 
+
+  function createCaptionPreview(previewSrc, altText) {
+    var wrap = document.createElement("div");
+    wrap.className = "works-page__carousel-slide-caption-preview-wrap";
+
+    var frame = document.createElement("div");
+    frame.className = "works-page__carousel-slide-caption-preview-frame";
+
+    var previewImg = document.createElement("img");
+    previewImg.className = "works-page__carousel-slide-caption-preview-img";
+    previewImg.setAttribute("src", previewSrc);
+    previewImg.setAttribute("alt", altText || "");
+    previewImg.setAttribute("loading", "eager");
+    previewImg.setAttribute("draggable", "false");
+
+    frame.appendChild(previewImg);
+    wrap.appendChild(frame);
+    return wrap;
+  }
+
+  function ensureCaptionPreview(slide) {
+    var captionWrap = slide.querySelector(".works-page__carousel-slide-caption-wrap");
+    if (!captionWrap || captionWrap.querySelector(".works-page__carousel-slide-caption-preview-wrap")) {
+      return;
+    }
+
+    var img = slide.querySelector(".works-page__carousel-img");
+    if (!img) return;
+
+    var previewSrc = img.getAttribute("data-carousel-src") || img.getAttribute("src");
+    if (!previewSrc) return;
+
+    var altText = slide.dataset.slideTitle || img.getAttribute("alt") || "";
+    captionWrap.insertBefore(createCaptionPreview(previewSrc, altText), captionWrap.firstChild);
+  }
+
   function createRoleTags(roleString) {
     var tagsWrap = document.createElement("div");
     tagsWrap.className = "works-page__carousel-slide-caption-tags";
@@ -150,6 +186,7 @@
       ) {
         captionTextWrap.appendChild(existingFullscreen);
       }
+      ensureCaptionPreview(slide);
       primeCarouselImages(slide);
       bindSlidePointerActive(slide);
       bindSlideHoverRandom(slide);
@@ -211,6 +248,7 @@
 
     img.setAttribute("draggable", "false");
 
+    captionWrap.appendChild(createCaptionPreview(imgSrc, title));
     captionWrap.appendChild(captionTextWrap);
     slide.insertBefore(inner, img);
     inner.appendChild(img);
