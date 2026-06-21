@@ -428,17 +428,17 @@ body {
   right: 0;
   bottom: 0;
   left: 0;
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
   transition: opacity 0.35s ease;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev::after {
-  background-image: linear-gradient(to right, rgba(247, 247, 245, 1) 0%, rgba(247, 247, 245, 0) 100%);
+  background-image: linear-gradient(to right, rgba(247, 247, 245, 0.3) 0%, rgba(247, 247, 245, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next::after {
-  background-image: linear-gradient(to left, rgba(247, 247, 245, 1) 0%, rgba(247, 247, 245, 0) 100%);
+  background-image: linear-gradient(to left, rgba(247, 247, 245, 0.3) 0%, rgba(247, 247, 245, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control:hover {
@@ -446,8 +446,12 @@ body {
   border-color: transparent;
 }
 
-.works-page__showcase-gallery-frame > .works-page__carousel-control:hover::after {
-  opacity: 1;
+.works-page__showcase-gallery-frame > .works-page__carousel-control--prev:hover::after {
+  background-image: linear-gradient(to right, rgba(247, 247, 245, 1) 0%, rgba(247, 247, 245, 0) 100%);
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control--next:hover::after {
+  background-image: linear-gradient(to left, rgba(247, 247, 245, 1) 0%, rgba(247, 247, 245, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control::before {
