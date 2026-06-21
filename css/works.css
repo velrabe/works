@@ -309,6 +309,38 @@ body {
   padding-bottom: var(--works-section);
 }
 
+.works-page__showcase-gallery {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-bottom: var(--works-section);
+}
+
+.works-page__showcase-gallery .works-page__showcase {
+  padding-bottom: 0;
+}
+
+.works-page__gallery-nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.works-page__gallery-nav .works-page__carousel-control--prev {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+.works-page__gallery-nav .works-page__carousel-control--next {
+  margin-right: 0;
+}
+
 .works-page__showcase-head {
   display: flex;
   flex-direction: column;
@@ -401,19 +433,6 @@ body {
   padding-left: calc((100% - var(--works-carousel-slide)) / 2);
   padding-right: calc((100% - var(--works-carousel-slide)) / 2);
 }
-
-#branding .works-page__carousel-track {
-  scroll-padding-inline: 0;
-  padding-left: 0;
-  padding-right: calc((100% - var(--works-carousel-slide)) / 2);
-}
-
-#pitch-deks .works-page__carousel-track {
-  scroll-padding-inline: 0;
-  padding-left: calc((100% - var(--works-carousel-slide)) / 2);
-  padding-right: 0;
-}
-
 .works-page__carousel-track::-webkit-scrollbar {
   display: none;
 }
@@ -433,15 +452,6 @@ body {
   opacity: 0.55;
   transition: opacity 0.25s ease;
 }
-
-#branding .works-page__carousel-slide {
-  scroll-snap-align: start;
-}
-
-#pitch-deks .works-page__carousel-slide {
-  scroll-snap-align: end;
-}
-
 .works-page__carousel-slide.is-active {
   opacity: 1;
 }
@@ -454,6 +464,8 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   overflow: hidden;
 }
@@ -463,19 +475,11 @@ body {
   width: 100%;
   height: min(48vh, 22rem);
   object-fit: contain;
+  object-position: center center;
   background-color: #f0f0ee;
   cursor: zoom-in;
-  transition: filter 0.5s ease-in;
+  transition: filter 0.3s cubic-bezier(0.34, 1.25, 0.64, 1);
 }
-
-#branding .works-page__carousel-img {
-  object-position: left center;
-}
-
-#pitch-deks .works-page__carousel-img {
-  object-position: right center;
-}
-
 .works-page__carousel-slide:hover .works-page__carousel-img {
   filter: blur(14px);
 }
@@ -491,7 +495,7 @@ body {
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.5s ease-in;
+  transition: opacity 0.3s cubic-bezier(0.34, 1.25, 0.64, 1);
   pointer-events: none;
 }
 
