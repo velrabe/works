@@ -405,14 +405,6 @@ body {
   z-index: 1;
 }
 
-.works-page__showcase-gallery-frame > .works-page__carousel-control--prev {
-  margin-right: 0;
-}
-
-.works-page__showcase-gallery-frame > .works-page__carousel-control--next {
-  margin-left: 0;
-}
-
 .works-page__showcase-gallery .works-page__showcase--pitch {
   padding-top: 0.75rem;
 }
