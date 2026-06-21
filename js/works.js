@@ -307,8 +307,8 @@
     var fullscreenIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     fullscreenIcon.setAttribute("class", "works-page__carousel-slide-fullscreen-icon");
     fullscreenIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    fullscreenIcon.setAttribute("width", "1em");
-    fullscreenIcon.setAttribute("height", "1em");
+    fullscreenIcon.setAttribute("width", "1.5rem");
+    fullscreenIcon.setAttribute("height", "1.5rem");
     fullscreenIcon.setAttribute("viewBox", "0 0 15 15");
     fullscreenIcon.setAttribute("aria-hidden", "true");
 
@@ -868,6 +868,7 @@
   var items = [];
   var index = 0;
   var lastFocus = null;
+  var viewToken = 0;
 
   function setLock(locked) {
     root.classList.toggle("works-modal-open", locked);
@@ -909,6 +910,10 @@
             img.getAttribute("data-full-src") ||
             img.currentSrc ||
             img.src,
+          previewSrc:
+            img.getAttribute("data-carousel-src") ||
+            img.getAttribute("src") ||
+            "",
           title: slide.dataset.slideTitle || img.alt || "",
           year: slide.dataset.slideYear || "",
           tags: getSlideTags(slide),
@@ -929,8 +934,22 @@
     var item = items[index];
     if (!item || !imgEl) return;
 
-    imgEl.src = item.src;
+    viewToken += 1;
+    var token = viewToken;
+    var previewSrc = item.previewSrc || item.src;
+    var fullSrc = item.src;
+
+    imgEl.src = previewSrc;
     imgEl.alt = item.title || "";
+
+    if (fullSrc && fullSrc !== previewSrc) {
+      var loader = new Image();
+      loader.onload = function () {
+        if (token !== viewToken || !imgEl) return;
+        imgEl.src = fullSrc;
+      };
+      loader.src = fullSrc;
+    }
 
     if (counterEl) {
       counterEl.textContent = index + 1 + " / " + items.length;
