@@ -30,11 +30,47 @@
     root.querySelectorAll(".works-page__carousel-slide").forEach(initSlideCaption);
   }
 
+  function createCaptionBlock(className, tagName, text) {
+    var wrap = document.createElement("div");
+    wrap.className = "works-page__carousel-slide-caption-" + className + "-wrap";
+
+    var el = document.createElement(tagName);
+    el.className = "works-page__carousel-slide-caption-" + className;
+    el.textContent = text;
+
+    wrap.appendChild(el);
+    return wrap;
+  }
+
+  function bindSlideHoverRandom(slide) {
+    var img = slide.querySelector(".works-page__carousel-img");
+    if (!img || slide.dataset.hoverBound === "true") return;
+
+    slide.dataset.hoverBound = "true";
+    slide.addEventListener("mouseenter", function () {
+      var rotate = (Math.random() * 2 - 1).toFixed(3);
+      var x = ((Math.random() * 2 - 1) * 0.5).toFixed(3);
+      var y = ((Math.random() * 2 - 1) * 0.5).toFixed(3);
+
+      img.style.setProperty("--slide-hover-rotate", rotate + "deg");
+      img.style.setProperty("--slide-hover-x", x + "rem");
+      img.style.setProperty("--slide-hover-y", y + "rem");
+    });
+  }
+
   function initSlideCaption(slide) {
-    if (slide.querySelector(".works-page__carousel-slide-inner")) return;
+    if (slide.querySelector(".works-page__carousel-slide-inner")) {
+      bindSlideHoverRandom(slide);
+      return;
+    }
 
     var img = slide.querySelector(".works-page__carousel-img");
     if (!img) return;
+
+    var title = slide.dataset.slideTitle || img.getAttribute("alt") || "";
+    var year = slide.dataset.slideYear || "";
+    var role = slide.dataset.slideRole || "";
+    var desc = slide.dataset.slideDesc || "";
 
     var inner = document.createElement("div");
     inner.className = "works-page__carousel-slide-inner";
@@ -45,15 +81,16 @@
     var captionTextWrap = document.createElement("div");
     captionTextWrap.className = "works-page__carousel-slide-caption-text-wrap";
 
-    var caption = document.createElement("p");
-    caption.className = "works-page__carousel-slide-caption";
-    caption.textContent = img.getAttribute("alt") || "";
+    captionTextWrap.appendChild(createCaptionBlock("title", "p", title));
+    if (year) captionTextWrap.appendChild(createCaptionBlock("year", "p", year));
+    if (role) captionTextWrap.appendChild(createCaptionBlock("role", "p", role));
+    if (desc) captionTextWrap.appendChild(createCaptionBlock("desc", "p", desc));
 
-    captionTextWrap.appendChild(caption);
     captionWrap.appendChild(captionTextWrap);
     slide.insertBefore(inner, img);
     inner.appendChild(img);
     inner.appendChild(captionWrap);
+    bindSlideHoverRandom(slide);
   }
 
   function CarouselRow(shell) {
@@ -88,6 +125,7 @@
     slide.dataset.galleryIndex =
       template.dataset.galleryIndex || String(templateIndex);
     slide.classList.remove("is-active");
+    delete slide.dataset.hoverBound;
     return slide;
   };
 
