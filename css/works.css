@@ -10,7 +10,9 @@
   --works-shadow: 0 0.0625rem 0.1875rem rgba(20, 20, 20, 0.04),
     0 0.75rem 2rem rgba(20, 20, 20, 0.06);
   --works-max: 72rem;
-  --works-side-space: max(0px, calc((100vw - var(--works-max)) / 2));
+  --works-shell-outer: min(100vw, var(--works-max));
+  --works-shell-content: calc(var(--works-shell-outer) - 2 * var(--works-gutter));
+  --works-side-space: max(0px, calc((100vw - var(--works-shell-outer)) / 2));
   --works-gutter: clamp(1.25rem, 4vw, 3rem);
   --works-section: clamp(3rem, 8vw, 5rem);
   --works-font: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -326,18 +328,18 @@ body {
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  justify-content: center;
+  position: relative;
   width: 100%;
 }
 
 .works-page__showcase-gallery-rows {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  width: 100%;
+  flex: 0 0 auto;
+  width: var(--works-shell-content);
+  max-width: calc(var(--works-max) - 2 * var(--works-gutter));
   min-width: 0;
-  max-width: var(--works-max);
-  margin-left: auto;
-  margin-right: auto;
   border-radius: var(--works-radius-sm);
   overflow: hidden;
 }
@@ -345,13 +347,14 @@ body {
 .works-page__showcase-gallery-frame > .works-page__carousel-control {
   display: flex;
   flex-direction: column;
-  flex: 0 0 var(--works-side-space);
+  flex: 0 0 auto;
   width: var(--works-side-space);
   min-width: 0;
   align-items: center;
   justify-content: center;
-  align-self: stretch;
-  position: relative;
+  position: absolute;
+  top: 0;
+  bottom: 0;
   height: auto;
   cursor: pointer;
   border: 0;
@@ -362,6 +365,15 @@ body {
   margin-left: 0;
   margin-right: 0;
   overflow: hidden;
+  z-index: 2;
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control--prev {
+  left: 0;
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control--next {
+  right: 0;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control::after {
@@ -377,11 +389,11 @@ body {
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev::after {
-  background-image: linear-gradient(to right, var(--works-bg) 0%, transparent 100%);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next::after {
-  background-image: linear-gradient(to left, var(--works-bg) 0%, transparent 100%);
+  background-image: linear-gradient(to left, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control:hover::after {
@@ -2033,12 +2045,20 @@ html.works-modal-open {
   }
 
   .works-page__showcase-gallery-rows {
+    width: 100%;
     max-width: none;
   }
 
   .works-page__showcase-gallery-frame > .works-page__carousel-control {
-    flex: 0 0 2.5rem;
     width: 2.5rem;
+  }
+
+  .works-page__showcase-gallery-frame > .works-page__carousel-control--prev {
+    left: calc(-1 * var(--works-gutter));
+  }
+
+  .works-page__showcase-gallery-frame > .works-page__carousel-control--next {
+    right: calc(-1 * var(--works-gutter));
   }
 
   .works-page__carousel-slide {
