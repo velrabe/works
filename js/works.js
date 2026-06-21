@@ -21,9 +21,8 @@
 })();
 
 (function () {
-  if (typeof Swiper === "undefined") return;
-
   var GALLERY_SPEED = 350;
+  var GALLERY_EASING = "cubic-bezier(0.34, 1.25, 0.64, 1)";
 
   function initSlideCaptions(root) {
     root.querySelectorAll(".works-page__carousel-slide").forEach(function (slide) {
@@ -53,81 +52,208 @@
     });
   }
 
-  var brandingEl = document.getElementById("gallery-branding");
-  var pitchEl = document.getElementById("gallery-pitch");
+  function getGap(track) {
+    var style = window.getComputedStyle(track);
+    var gap = parseFloat(style.columnGap || style.gap || "0");
+    return isNaN(gap) ? 0 : gap;
+  }
+
+  function getMetrics(root, track) {
+    var slide = track.querySelector(".works-page__carousel-slide:not(.is-clone)");
+    if (!slide) slide = track.querySelector(".works-page__carousel-slide");
+    if (!slide) return null;
+
+    var gap = getGap(track);
+    var slideStyle = window.getComputedStyle(slide);
+    var marginRight = parseFloat(slideStyle.marginRight) || 0;
+    var slideWidth = slide.offsetWidth + (gap || marginRight);
+    var centerOffset = (root.clientWidth - slide.offsetWidth) / 2;
+    return { slideWidth: slideWidth, centerOffset: centerOffset };
+  }
+
+  function cloneTrackSlides(track, count) {
+    var originals = Array.prototype.slice.call(
+      track.querySelectorAll(".works-page__carousel-slide:not(.is-clone)")
+    );
+
+    for (var i = count - 1; i >= 0; i -= 1) {
+      var pre = originals[i].cloneNode(true);
+      pre.classList.add("is-clone");
+      pre.removeAttribute("data-gallery-index");
+      track.insertBefore(pre, track.firstChild);
+    }
+
+    originals.forEach(function (slide) {
+      var post = slide.cloneNode(true);
+      post.classList.add("is-clone");
+      post.removeAttribute("data-gallery-index");
+      track.appendChild(post);
+    });
+  }
+
+  function preparePitchTrack(track, root) {
+    var slides = Array.prototype.slice.call(track.children);
+    if (slides.length < 8) return slides.length;
+
+    slides.forEach(function (slide, index) {
+      slide.dataset.galleryIndex = String(index);
+    });
+
+    var extras = slides.slice(0, 2);
+    var ordered = [slides[7], slides[6], slides[5], slides[4], slides[3], slides[2]];
+    track.textContent = "";
+
+    ordered.forEach(function (slide) {
+      track.appendChild(slide);
+    });
+
+    extras.forEach(function (slide) {
+      slide.classList.add("works-page__carousel-slide--lightbox-only");
+      slide.hidden = true;
+      root.appendChild(slide);
+    });
+
+    return ordered.length;
+  }
+
+  function setupLinkedTrack(root, options) {
+    var track = root.querySelector(".works-page__carousel-track");
+    if (!track) return null;
+
+    var count = options.preparePitch ? preparePitchTrack(track, root) : track.children.length;
+    var originals = Array.prototype.slice.call(track.children);
+
+    originals.forEach(function (slide, index) {
+      slide.classList.remove("is-clone", "is-active");
+      if (!slide.hasAttribute("data-gallery-index")) {
+        slide.dataset.galleryIndex = String(index);
+      }
+    });
+
+    cloneTrackSlides(track, count);
+
+    return {
+      root: root,
+      track: track,
+      count: count,
+      pos: count,
+      invert: !!options.invert,
+    };
+  }
+
+  function logicalIndex(state) {
+    return ((state.pos - state.count) % state.count + state.count) % state.count;
+  }
+
+  function translateFor(state, metrics) {
+    var offset = state.pos * metrics.slideWidth;
+    return state.invert
+      ? metrics.centerOffset + offset
+      : metrics.centerOffset - offset;
+  }
+
+  function setTrackTranslate(state, metrics, animate) {
+    state.track.style.transition = animate
+      ? "transform " + GALLERY_SPEED + "ms " + GALLERY_EASING
+      : "none";
+    state.track.style.transform =
+      "translate3d(" + translateFor(state, metrics) + "px, 0, 0)";
+  }
+
+  function updateActiveStates(brandingState, pitchState) {
+    var brandingIndex = logicalIndex(brandingState);
+    var pitchIndex = logicalIndex(pitchState);
+
+    brandingState.track.querySelectorAll(".works-page__carousel-slide").forEach(function (slide, index) {
+      slide.classList.toggle("is-active", index === brandingState.pos);
+    });
+
+    pitchState.track.querySelectorAll(".works-page__carousel-slide").forEach(function (slide, index) {
+      slide.classList.toggle("is-active", index === pitchState.pos);
+    });
+
+    brandingState.index = brandingIndex;
+    pitchState.index = pitchIndex;
+  }
+
+  function normalizeLoop(state) {
+    if (state.pos >= state.count * 2) {
+      state.pos -= state.count;
+      return true;
+    }
+    if (state.pos < state.count) {
+      state.pos += state.count;
+      return true;
+    }
+    return false;
+  }
+
+  var brandingRoot = document.getElementById("gallery-branding");
+  var pitchRoot = document.getElementById("gallery-pitch");
   var prevBtn = document.querySelector("[data-linked-gallery-prev]");
   var nextBtn = document.querySelector("[data-linked-gallery-next]");
-  if (!brandingEl || !pitchEl) return;
+  if (!brandingRoot || !pitchRoot) return;
 
-  initSlideCaptions(brandingEl);
-  initSlideCaptions(pitchEl);
+  initSlideCaptions(brandingRoot);
+  initSlideCaptions(pitchRoot);
 
-  brandingEl.querySelectorAll(".swiper-slide").forEach(function (slide, index) {
-    slide.dataset.galleryIndex = String(index);
-  });
-  pitchEl.querySelectorAll(".swiper-slide").forEach(function (slide, index) {
-    slide.dataset.galleryIndex = String(index);
-  });
+  var brandingState = setupLinkedTrack(brandingRoot, { invert: true });
+  var pitchState = setupLinkedTrack(pitchRoot, { invert: false, preparePitch: true });
+  if (!brandingState || !pitchState) return;
 
-  var brandingCount = brandingEl.querySelectorAll(".swiper-slide").length;
-  var pitchCount = pitchEl.querySelectorAll(".swiper-slide").length;
-  var syncing = false;
+  var animating = false;
 
-  var sharedOptions = {
-    slidesPerView: "auto",
-    centeredSlides: true,
-    loop: true,
-    speed: GALLERY_SPEED,
-    spaceBetween: 12,
-    slideToClickedSlide: false,
-    watchSlidesProgress: true,
-    loopAdditionalSlides: 2,
-  };
+  function render(animate) {
+    var brandingMetrics = getMetrics(brandingState.root, brandingState.track);
+    var pitchMetrics = getMetrics(pitchState.root, pitchState.track);
+    if (!brandingMetrics || !pitchMetrics) return;
 
-  var brandingSwiper = new Swiper(brandingEl, Object.assign({}, sharedOptions, {
-    loopedSlides: brandingCount,
-  }));
-
-  var pitchSwiper = new Swiper(pitchEl, Object.assign({}, sharedOptions, {
-    loopedSlides: pitchCount,
-    allowTouchMove: false,
-  }));
-
-  function mirroredPitchIndex(brandingIndex) {
-    return (pitchCount - 1 - brandingIndex + pitchCount) % pitchCount;
+    setTrackTranslate(brandingState, brandingMetrics, animate);
+    setTrackTranslate(pitchState, pitchMetrics, animate);
+    updateActiveStates(brandingState, pitchState);
   }
 
-  function syncPitchToBranding(speed) {
-    pitchSwiper.slideToLoop(
-      mirroredPitchIndex(brandingSwiper.realIndex),
-      speed === undefined ? GALLERY_SPEED : speed,
-      false
-    );
+  function afterTransition(state, metrics) {
+    if (!normalizeLoop(state)) return;
+    setTrackTranslate(state, metrics, false);
   }
 
-  syncing = true;
-  brandingSwiper.slideToLoop(0, 0, false);
-  pitchSwiper.slideToLoop(mirroredPitchIndex(0), 0, false);
-  syncing = false;
+  function move(direction) {
+    if (animating) return;
+    animating = true;
 
-  brandingSwiper.on("slideChangeTransitionEnd", function () {
-    if (syncing) return;
-    syncing = true;
-    syncPitchToBranding(GALLERY_SPEED);
-    syncing = false;
-  });
+    brandingState.pos += direction;
+    pitchState.pos += direction;
+
+    render(true);
+
+    window.setTimeout(function () {
+      var brandingMetrics = getMetrics(brandingState.root, brandingState.track);
+      var pitchMetrics = getMetrics(pitchState.root, pitchState.track);
+      if (brandingMetrics) afterTransition(brandingState, brandingMetrics);
+      if (pitchMetrics) afterTransition(pitchState, pitchMetrics);
+      render(false);
+      animating = false;
+    }, GALLERY_SPEED);
+  }
+
+  render(false);
 
   if (prevBtn) {
     prevBtn.addEventListener("click", function () {
-      brandingSwiper.slidePrev();
+      move(-1);
     });
   }
 
   if (nextBtn) {
     nextBtn.addEventListener("click", function () {
-      brandingSwiper.slideNext();
+      move(1);
     });
   }
+
+  window.addEventListener("resize", function () {
+    render(false);
+  });
 })();
 
 (function () {
@@ -265,15 +391,27 @@
     document.body.classList.toggle("works-modal-open", locked);
   }
 
-  function getItemsFromSwiper(swiperEl) {
-    return Array.prototype.map.call(
-      swiperEl.querySelectorAll(
-        ".swiper-slide:not(.swiper-slide-duplicate) .works-page__carousel-img"
-      ),
-      function (img) {
-        return { src: img.currentSrc || img.src, alt: img.alt || "" };
-      }
+  function getItemsFromGallery(viewportEl) {
+    var slides = Array.prototype.slice.call(
+      viewportEl.querySelectorAll(".works-page__carousel-slide:not(.is-clone)")
     );
+
+    slides.sort(function (a, b) {
+      return (
+        parseInt(a.dataset.galleryIndex || "0", 10) -
+        parseInt(b.dataset.galleryIndex || "0", 10)
+      );
+    });
+
+    return slides.map(function (slide) {
+      var img = slide.querySelector(".works-page__carousel-img");
+      return {
+        src: img.currentSrc || img.src,
+        alt: img ? img.alt || "" : "",
+      };
+    }).filter(function (item) {
+      return !!item.src;
+    });
   }
 
   function updateView() {
@@ -295,8 +433,8 @@
     if (nextBtn) nextBtn.hidden = items.length <= 1;
   }
 
-  function open(swiperEl, startIndex) {
-    items = getItemsFromSwiper(swiperEl);
+  function open(viewportEl, startIndex) {
+    items = getItemsFromGallery(viewportEl);
     if (!items.length) return;
 
     index = startIndex;
@@ -321,14 +459,14 @@
   }
 
   document
-    .querySelectorAll(".works-page__gallery-swiper .works-page__carousel-img")
+    .querySelectorAll(".works-page__gallery-viewport .works-page__carousel-img")
     .forEach(function (img) {
       img.addEventListener("click", function () {
-        var swiperEl = img.closest(".works-page__gallery-swiper");
-        if (!swiperEl) return;
-        var slide = img.closest(".swiper-slide");
+        var viewportEl = img.closest(".works-page__gallery-viewport");
+        if (!viewportEl) return;
+        var slide = img.closest(".works-page__carousel-slide");
         var startIndex = slide ? parseInt(slide.dataset.galleryIndex || "0", 10) : 0;
-        open(swiperEl, isNaN(startIndex) ? 0 : startIndex);
+        open(viewportEl, isNaN(startIndex) ? 0 : startIndex);
       });
     });
 
