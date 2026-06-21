@@ -423,34 +423,11 @@ body {
   width: 100%;
 }
 
-.works-page__gallery-viewport {
+.works-page__carousel-viewport {
   display: flex;
   flex-direction: column;
   width: 100%;
   overflow: hidden;
-}
-
-.works-page__gallery-viewport .works-page__carousel-track {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  gap: var(--works-carousel-gap);
-  will-change: transform;
-}
-
-.works-page__gallery-viewport .works-page__carousel-slide {
-  margin-right: 0;
-}
-
-.works-page__gallery-viewport .works-page__carousel-slide {
-  width: var(--works-carousel-slide);
-  height: auto;
-  opacity: 0.4;
-  transition: opacity 0.3s cubic-bezier(0.34, 1.25, 0.64, 1);
-}
-
-.works-page__gallery-viewport .works-page__carousel-slide-active {
-  opacity: 1;
 }
 
 .works-page__carousel {
@@ -463,20 +440,10 @@ body {
 .works-page__carousel-track {
   display: flex;
   flex-direction: row;
-  flex: 1 1 auto;
-  width: 100%;
+  flex: 0 0 auto;
+  width: max-content;
   min-width: 0;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  scroll-padding-inline: calc((100% - var(--works-carousel-slide)) / 2);
-  padding-left: calc((100% - var(--works-carousel-slide)) / 2);
-  padding-right: calc((100% - var(--works-carousel-slide)) / 2);
-}
-.works-page__carousel-track::-webkit-scrollbar {
-  display: none;
+  will-change: transform;
 }
 
 .works-page__carousel-slide {
@@ -491,8 +458,8 @@ body {
   overflow: hidden;
   background-color: var(--works-surface);
   margin-right: var(--works-carousel-gap);
-  opacity: 0.55;
-  transition: opacity 0.25s ease;
+  opacity: 0.4;
+  transition: opacity 0.3s cubic-bezier(0.34, 1.25, 0.64, 1);
 }
 .works-page__carousel-slide.is-active {
   opacity: 1;
