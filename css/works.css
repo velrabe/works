@@ -423,6 +423,30 @@ body {
   width: 100%;
 }
 
+.works-page__gallery-swiper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+
+.works-page__gallery-swiper .swiper-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.works-page__gallery-swiper .swiper-slide {
+  width: var(--works-carousel-slide);
+  height: auto;
+  opacity: 0.4;
+  transition: opacity 0.3s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.works-page__gallery-swiper .swiper-slide-active {
+  opacity: 1;
+}
+
 .works-page__carousel {
   display: flex;
   flex-direction: row;
