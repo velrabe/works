@@ -56,12 +56,10 @@
     inner.appendChild(captionWrap);
   }
 
-  function CarouselRow(shell, reverseOrder, invertMotion) {
+  function CarouselRow(shell) {
     this.shell = shell;
     this.viewport = shell.querySelector("[data-carousel-viewport]");
     this.track = shell.querySelector("[data-carousel-viewport] [data-carousel-track]");
-    this.reverseOrder = reverseOrder;
-    this.invertMotion = invertMotion;
     this.templates = Array.from(
       this.track.querySelectorAll(".works-page__carousel-slide")
     )
@@ -79,10 +77,6 @@
 
     for (i = 0; i < SLIDE_COUNT; i += 1) {
       order.push(i);
-    }
-
-    if (this.reverseOrder) {
-      order.reverse();
     }
 
     return order;
@@ -170,11 +164,7 @@
   CarouselRow.prototype.getTranslateX = function () {
     var slide = this.track.children[this.domIndex];
     if (!slide) return 0;
-    var slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
-    if (this.invertMotion) {
-      return slideCenter - this.centerX;
-    }
-    return this.centerX - slideCenter;
+    return this.centerX - (slide.offsetLeft + slide.offsetWidth / 2);
   };
 
   CarouselRow.prototype.applyTransform = function (animate) {
@@ -198,9 +188,17 @@
   var nextBtn = document.querySelector("[data-linked-gallery-next]");
   if (!brandingShell || !pitchShell) return;
 
-  var branding = new CarouselRow(brandingShell, false, false);
-  var pitch = new CarouselRow(pitchShell, true, true);
+  var branding = new CarouselRow(brandingShell);
+  var pitch = new CarouselRow(pitchShell);
   var rows = [branding, pitch];
+
+  function pitchDomForLogical(logical) {
+    return SLIDE_COUNT * START_WAGON + (SLIDE_COUNT - 1 - logical);
+  }
+
+  function syncPitchDom() {
+    pitch.domIndex = pitchDomForLogical(logicalIndex);
+  }
   var logicalIndex = 0;
   var animating = false;
 
@@ -215,8 +213,9 @@
   function initGallery() {
     rows.forEach(function (row) {
       row.buildWagons();
-      row.domIndex = SLIDE_COUNT * START_WAGON + logicalIndex;
     });
+    branding.domIndex = SLIDE_COUNT * START_WAGON + logicalIndex;
+    syncPitchDom();
 
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
@@ -260,6 +259,9 @@
 
     rows.forEach(function (row) {
       row.ensureWagonBuffer();
+    });
+    syncPitchDom();
+    rows.forEach(function (row) {
       row.measure();
       row.applyTransform(false);
       row.setActive();
@@ -291,9 +293,8 @@
 
     logicalIndex = (logicalIndex + delta + SLIDE_COUNT) % SLIDE_COUNT;
 
-    rows.forEach(function (row) {
-      row.domIndex = targetDom;
-    });
+    branding.domIndex = targetDom;
+    syncPitchDom();
 
     applyRows(true);
 
