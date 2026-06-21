@@ -508,7 +508,8 @@
     this.track.style.transition = animate
       ? "transform " + TRANSITION_MS + "ms cubic-bezier(0.4, 0, 0.2, 1)"
       : "none";
-    this.track.style.transform = "translate3d(" + x + "px, 0, 0)";
+    this.track.style.transform =
+      "translate3d(calc(" + x + "px + var(--works-carousel-row-offset, 0px)), 0, 0)";
   };
 
   CarouselRow.prototype.setActive = function () {

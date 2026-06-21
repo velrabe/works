@@ -695,15 +695,28 @@ body {
 }
 
 @media (min-width: 48rem) {
+  #gallery-branding {
+    --works-carousel-row-offset: -3rem;
+  }
+
+  #gallery-pitch {
+    --works-carousel-row-offset: 3rem;
+  }
+
   .works-page__carousel-slide {
     filter: blur(200px);
+    transform: scale(0.9);
+    transform-origin: center center;
     transition:
       opacity 0.3s cubic-bezier(0.34, 1.25, 0.64, 1),
-      filter 0.6s ease-in-out;
+      filter 0.6s ease-in-out,
+      transform 0.6s ease-in-out;
+    will-change: filter, transform, opacity;
   }
 
   .works-page__carousel-slide.is-active {
     filter: blur(0);
+    transform: scale(1);
   }
 }
 
