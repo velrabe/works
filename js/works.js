@@ -21,7 +21,7 @@
 })();
 
 (function () {
-  var SLIDE_COUNT = 6;
+  var SLIDE_COUNT = 12;
   var WAGONS_IN_DOM = 3;
   var START_WAGON = 1;
   var TRANSITION_MS = 350;
@@ -77,6 +77,32 @@
     return wrap;
   }
 
+  function createRoleTags(roleString) {
+    var tagsWrap = document.createElement("div");
+    tagsWrap.className = "works-page__carousel-slide-caption-tags";
+
+    roleString
+      .replace(/^Роль:\s*/i, "")
+      .split(",")
+      .map(function (tag) {
+        return tag.trim();
+      })
+      .filter(Boolean)
+      .forEach(function (tag) {
+        var tagWrap = document.createElement("div");
+        tagWrap.className = "works-page__carousel-slide-caption-tag-wrap";
+
+        var tagEl = document.createElement("span");
+        tagEl.className = "works-page__carousel-slide-caption-tag";
+        tagEl.textContent = tag;
+
+        tagWrap.appendChild(tagEl);
+        tagsWrap.appendChild(tagWrap);
+      });
+
+    return tagsWrap;
+  }
+
   function bindSlideHoverRandom(slide) {
     var img = slide.querySelector(".works-page__carousel-img");
     if (!img || slide.dataset.hoverBound === "true") return;
@@ -125,7 +151,6 @@
     var title = slide.dataset.slideTitle || img.getAttribute("alt") || "";
     var year = slide.dataset.slideYear || "";
     var role = slide.dataset.slideRole || "";
-    var desc = slide.dataset.slideDesc || "";
 
     var inner = document.createElement("div");
     inner.className = "works-page__carousel-slide-inner";
@@ -138,8 +163,7 @@
 
     captionTextWrap.appendChild(createCaptionBlock("title", "p", title));
     if (year) captionTextWrap.appendChild(createCaptionBlock("year", "p", year));
-    if (role) captionTextWrap.appendChild(createCaptionBlock("role", "p", role));
-    if (desc) captionTextWrap.appendChild(createCaptionBlock("desc", "p", desc));
+    if (role) captionTextWrap.appendChild(createRoleTags(role));
 
     var fullscreenBtn = document.createElement("button");
     fullscreenBtn.type = "button";
