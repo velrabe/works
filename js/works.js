@@ -280,8 +280,19 @@
     return SLIDE_COUNT * START_WAGON + (SLIDE_COUNT - 1 - logical);
   }
 
-  function syncPitchDomFromBranding() {
-    pitch.domIndex = PITCH_PAIR_OFFSET - branding.domIndex;
+  function pitchDomForBranding(brandingDom, logical) {
+    var middleStart = SLIDE_COUNT * START_WAGON;
+    var middleEnd = middleStart + SLIDE_COUNT - 1;
+
+    if (brandingDom >= middleStart && brandingDom <= middleEnd) {
+      return PITCH_PAIR_OFFSET - brandingDom;
+    }
+
+    return pitchDomForLogical(logical);
+  }
+
+  function syncPitchPair() {
+    pitch.domIndex = pitchDomForBranding(branding.domIndex, logicalIndex);
   }
 
   var logicalIndex = 0;
@@ -300,7 +311,7 @@
       row.buildWagons();
     });
     branding.domIndex = SLIDE_COUNT * START_WAGON + logicalIndex;
-    syncPitchDomFromBranding();
+    syncPitchPair();
 
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
@@ -346,7 +357,7 @@
       row.ensureWagonBuffer();
     });
 
-    syncPitchDomFromBranding();
+    syncPitchPair();
 
     rows.forEach(function (row) {
       row.measure();
@@ -359,8 +370,8 @@
     if (animating || !delta) return;
     animating = true;
 
-    var prepended = logicalIndex === 0 && delta < 0;
     var targetDom = branding.domIndex + delta;
+    var prepended = delta < 0 && targetDom < 0;
 
     if (prepended) {
       rows.forEach(function (row) {
@@ -381,12 +392,7 @@
     logicalIndex = (logicalIndex + delta + SLIDE_COUNT) % SLIDE_COUNT;
 
     branding.domIndex = targetDom;
-
-    if (delta > 0) {
-      pitch.domIndex -= 1;
-    } else {
-      pitch.domIndex = pitchDomForLogical(logicalIndex);
-    }
+    syncPitchPair();
 
     applyRows(true);
 
