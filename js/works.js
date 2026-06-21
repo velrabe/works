@@ -249,6 +249,7 @@
   function initSlideCaption(slide) {
     if (slide.querySelector(".works-page__carousel-slide-inner")) {
       var inner = slide.querySelector(".works-page__carousel-slide-inner");
+      var captionWrap = slide.querySelector(".works-page__carousel-slide-caption-wrap");
       var captionTextWrap = slide.querySelector(
         ".works-page__carousel-slide-caption-text-wrap"
       );
@@ -257,10 +258,10 @@
       );
       if (
         existingFullscreen &&
-        captionTextWrap &&
-        existingFullscreen.parentElement !== captionTextWrap
+        captionWrap &&
+        existingFullscreen.parentElement !== captionWrap
       ) {
-        captionTextWrap.appendChild(existingFullscreen);
+        captionWrap.appendChild(existingFullscreen);
       }
       ensureCaptionPreview(slide);
       ensureCaptionHeading(captionTextWrap);
@@ -328,12 +329,12 @@
     fullscreenIcon.appendChild(fullscreenPathIcon);
     fullscreenIconWrap.appendChild(fullscreenIcon);
     fullscreenBtn.appendChild(fullscreenIconWrap);
-    captionTextWrap.appendChild(fullscreenBtn);
 
     img.setAttribute("draggable", "false");
 
     captionWrap.appendChild(createCaptionPreview(imgSrc, title));
     captionWrap.appendChild(captionTextWrap);
+    captionWrap.appendChild(fullscreenBtn);
     slide.insertBefore(inner, img);
     inner.appendChild(img);
     inner.appendChild(captionWrap);
