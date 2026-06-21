@@ -366,7 +366,19 @@
 
   var panel = quote.closest(".works-page__case-cover-panel");
   var text = quote.textContent.replace(/\s+/g, " ").trim();
-  var words = text.split(" ");
+  var rawWords = text.split(" ");
+  var words = [];
+  var glueNext = /^(and|in|or|the|a|to|of)$/i;
+
+  for (var wi = 0; wi < rawWords.length; wi += 1) {
+    var chunk = rawWords[wi];
+    while (glueNext.test(chunk) && wi + 1 < rawWords.length) {
+      wi += 1;
+      chunk += " " + rawWords[wi];
+    }
+    words.push(chunk);
+  }
+
   var played = false;
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -400,7 +412,7 @@
     if (played || reducedMotion) return;
     played = true;
     quote.querySelectorAll(".works-page__case-cover-char").forEach(function (span, index) {
-      span.style.animationDelay = index * 0.025 + "s";
+      span.style.animationDelay = index * 0.0175 + "s";
       span.classList.add("is-focus-in");
     });
   }

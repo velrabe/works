@@ -626,28 +626,32 @@
   flex: 1;
   width: 100%;
   min-height: 0;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .works-page__case-cover-tags {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
   width: 100%;
   padding-top: 0;
   padding-bottom: 0;
   padding-left: 0;
   padding-right: 0;
+  gap: 2rem;
 }
 
 .works-page__case-cover-tag-wrap {
   display: flex;
   flex-direction: column;
-  padding-right: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .works-page__case-cover-tag {
@@ -689,7 +693,7 @@
 
 .works-page__case-cover-word {
   display: inline-block;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   white-space: nowrap;
 }
 
@@ -704,7 +708,7 @@
 }
 
 .works-page__case-cover-char.is-focus-in {
-  animation: works-cover-focus-in 0.4s forwards;
+  animation: works-cover-focus-in 0.28s forwards;
 }
 
 @keyframes works-cover-focus-in {
