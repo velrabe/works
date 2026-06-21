@@ -53,31 +53,33 @@
   }
 
   function initCarouselCaptions() {
-    document.querySelectorAll(".works-page__carousel-slide").forEach(function (slide) {
-      if (slide.querySelector(".works-page__carousel-slide-inner")) return;
+    document
+      .querySelectorAll(".works-page__showcase-gallery .works-page__carousel-slide")
+      .forEach(function (slide) {
+        if (slide.querySelector(".works-page__carousel-slide-inner")) return;
 
-      var img = slide.querySelector(".works-page__carousel-img");
-      if (!img) return;
+        var img = slide.querySelector(".works-page__carousel-img");
+        if (!img) return;
 
-      var inner = document.createElement("div");
-      inner.className = "works-page__carousel-slide-inner";
+        var inner = document.createElement("div");
+        inner.className = "works-page__carousel-slide-inner";
 
-      var captionWrap = document.createElement("div");
-      captionWrap.className = "works-page__carousel-slide-caption-wrap";
+        var captionWrap = document.createElement("div");
+        captionWrap.className = "works-page__carousel-slide-caption-wrap";
 
-      var captionTextWrap = document.createElement("div");
-      captionTextWrap.className = "works-page__carousel-slide-caption-text-wrap";
+        var captionTextWrap = document.createElement("div");
+        captionTextWrap.className = "works-page__carousel-slide-caption-text-wrap";
 
-      var caption = document.createElement("p");
-      caption.className = "works-page__carousel-slide-caption";
-      caption.textContent = img.getAttribute("alt") || "";
+        var caption = document.createElement("p");
+        caption.className = "works-page__carousel-slide-caption";
+        caption.textContent = img.getAttribute("alt") || "";
 
-      captionTextWrap.appendChild(caption);
-      captionWrap.appendChild(captionTextWrap);
-      slide.insertBefore(inner, img);
-      inner.appendChild(img);
-      inner.appendChild(captionWrap);
-    });
+        captionTextWrap.appendChild(caption);
+        captionWrap.appendChild(captionTextWrap);
+        slide.insertBefore(inner, img);
+        inner.appendChild(img);
+        inner.appendChild(captionWrap);
+      });
   }
 
   function setupInfiniteTrack(track) {
@@ -116,13 +118,10 @@
       );
     }
 
-    function scrollToRealIndex(index, behavior) {
+    function scrollToRealIndex(index) {
       var slide = getSlideByRealIndex(index);
       if (!slide) return;
-      track.scrollTo({
-        left: getCenteredScrollLeft(track, slide),
-        behavior: behavior || "auto",
-      });
+      track.scrollLeft = getCenteredScrollLeft(track, slide);
     }
 
     function normalizeLoop() {
@@ -135,19 +134,14 @@
       if (isNaN(realIndex)) return;
 
       jumping = true;
-      scrollToRealIndex(realIndex, "auto");
+      scrollToRealIndex(realIndex);
       jumping = false;
     }
 
     function getRealIndex() {
       var closest = getClosestSlide(track);
-      if (!closest) return 0;
-
-      if (closest.dataset.slideIndex) {
-        return parseInt(closest.dataset.slideIndex, 10) || 0;
-      }
-
-      return 0;
+      if (!closest || !closest.dataset.slideIndex) return 0;
+      return parseInt(closest.dataset.slideIndex, 10) || 0;
     }
 
     function updateActiveSlides() {
@@ -175,9 +169,6 @@
       isJumping: function () {
         return jumping;
       },
-      setJumping: function (value) {
-        jumping = value;
-      },
     };
   }
 
@@ -188,90 +179,46 @@
   var brandingLoop = brandingTrack ? setupInfiniteTrack(brandingTrack) : null;
   var pitchLoop = pitchTrack ? setupInfiniteTrack(pitchTrack) : null;
   var syncing = false;
+  var brandingIndex = 0;
 
-  function getMirroredPitchIndex(brandingIndex) {
+  function getMirroredPitchIndex(index) {
     if (!pitchLoop) return 0;
-    return (pitchLoop.count - 1 - brandingIndex + pitchLoop.count) % pitchLoop.count;
+    return (pitchLoop.count - 1 - index + pitchLoop.count) % pitchLoop.count;
   }
 
-  function getMirroredBrandingIndex(pitchIndex) {
-    if (!brandingLoop) return 0;
-    return (pitchLoop.count - 1 - pitchIndex + brandingLoop.count) % brandingLoop.count;
-  }
+  function applyLinkedState(nextBrandingIndex) {
+    if (!brandingLoop || !pitchLoop) return;
 
-  function syncFromBranding(behavior) {
-    if (!brandingLoop || !pitchLoop || syncing) return;
-
-    var brandingIndex = brandingLoop.getRealIndex();
+    brandingIndex =
+      ((nextBrandingIndex % brandingLoop.count) + brandingLoop.count) %
+      brandingLoop.count;
     var pitchIndex = getMirroredPitchIndex(brandingIndex);
 
-    syncing = true;
-    pitchLoop.setJumping(true);
-    pitchLoop.scrollToRealIndex(pitchIndex, behavior || "auto");
-    pitchLoop.updateActiveSlides();
-    pitchLoop.setJumping(false);
-    syncing = false;
-  }
-
-  function syncFromPitch(behavior) {
-    if (!brandingLoop || !pitchLoop || syncing) return;
-
-    var pitchIndex = pitchLoop.getRealIndex();
-    var brandingIndex = getMirroredBrandingIndex(pitchIndex);
-
-    syncing = true;
-    brandingLoop.setJumping(true);
-    brandingLoop.scrollToRealIndex(brandingIndex, behavior || "auto");
+    brandingLoop.scrollToRealIndex(brandingIndex);
+    pitchLoop.scrollToRealIndex(pitchIndex);
     brandingLoop.updateActiveSlides();
-    brandingLoop.setJumping(false);
-    syncing = false;
+    pitchLoop.updateActiveSlides();
   }
 
   function moveLinked(direction) {
-    if (!brandingLoop || !pitchLoop) return;
-
-    var brandingIndex = brandingLoop.getRealIndex();
-    var nextBrandingIndex =
-      (brandingIndex + direction + brandingLoop.count) % brandingLoop.count;
-    var nextPitchIndex = getMirroredPitchIndex(nextBrandingIndex);
-
+    if (!brandingLoop || !pitchLoop || syncing) return;
     syncing = true;
-    brandingLoop.scrollToRealIndex(nextBrandingIndex, "smooth");
-    pitchLoop.scrollToRealIndex(nextPitchIndex, "smooth");
-    brandingLoop.updateActiveSlides();
-    pitchLoop.updateActiveSlides();
-    window.setTimeout(function () {
-      syncing = false;
-    }, 350);
+    applyLinkedState(brandingIndex + direction);
+    syncing = false;
   }
 
-  if (brandingLoop) {
-    brandingLoop.scrollToRealIndex(0, "auto");
-    brandingLoop.updateActiveSlides();
-  }
-
-  if (pitchLoop && brandingLoop) {
-    pitchLoop.scrollToRealIndex(getMirroredPitchIndex(0), "auto");
-    pitchLoop.updateActiveSlides();
-  }
+  applyLinkedState(0);
 
   if (brandingTrack) {
     brandingTrack.addEventListener(
       "scroll",
       function () {
         if (syncing || brandingLoop.isJumping()) return;
-        syncFromBranding("auto");
-      },
-      { passive: true }
-    );
-  }
-
-  if (pitchTrack) {
-    pitchTrack.addEventListener(
-      "scroll",
-      function () {
-        if (syncing || pitchLoop.isJumping()) return;
-        syncFromPitch("auto");
+        syncing = true;
+        brandingIndex = brandingLoop.getRealIndex();
+        pitchLoop.scrollToRealIndex(getMirroredPitchIndex(brandingIndex));
+        pitchLoop.updateActiveSlides();
+        syncing = false;
       },
       { passive: true }
     );
@@ -288,6 +235,7 @@
       moveLinked(1);
     });
   });
+})();
 })();
 
 (function () {
