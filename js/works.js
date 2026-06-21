@@ -65,6 +65,87 @@
     });
   }
 
+  var ROLE_LABELS = {
+    "motion-design": "Моушен-дизайн",
+    "ux/ui": "UX/UI",
+    "web-design": "Веб-дизайн",
+    "product design": "Продуктовый дизайн",
+    "graphic design": "График-дизайн",
+  };
+
+  function capitalizeTagLabel(tag) {
+    return tag.replace(/(^|[\s-/])(\p{L})/gu, function (_match, sep, letter) {
+      return sep + letter.toUpperCase();
+    });
+  }
+
+  function expandRoleTags(roleString) {
+    var tags = roleString
+      .replace(/^Роль:\s*/i, "")
+      .split(",")
+      .map(function (tag) {
+        return tag.trim();
+      })
+      .filter(Boolean);
+
+    var result = [];
+    var seen = {};
+
+    function pushTag(label) {
+      var key = label.toLowerCase();
+      if (seen[key]) return;
+      seen[key] = true;
+      result.push(label);
+    }
+
+    tags.forEach(function (tag) {
+      var lower = tag.toLowerCase();
+      if (lower === "deck/slides") {
+        pushTag("Питч-дек");
+        pushTag("График-дизайн");
+        return;
+      }
+
+      var mapped = ROLE_LABELS[lower];
+      if (mapped) {
+        pushTag(mapped);
+        return;
+      }
+
+      pushTag(capitalizeTagLabel(tag));
+    });
+
+    return result;
+  }
+
+  function createCaptionHeading(title, year) {
+    var headingWrap = document.createElement("div");
+    headingWrap.className = "works-page__carousel-slide-caption-heading-wrap";
+    headingWrap.appendChild(createCaptionBlock("title", "p", title));
+    if (year) headingWrap.appendChild(createCaptionBlock("year", "p", year));
+    return headingWrap;
+  }
+
+  function ensureCaptionHeading(captionTextWrap) {
+    if (!captionTextWrap) return;
+    if (captionTextWrap.querySelector(".works-page__carousel-slide-caption-heading-wrap")) return;
+
+    var titleWrap = captionTextWrap.querySelector(
+      ".works-page__carousel-slide-caption-title-wrap"
+    );
+    if (!titleWrap) return;
+
+    var yearWrap = captionTextWrap.querySelector(
+      ".works-page__carousel-slide-caption-year-wrap"
+    );
+    var headingWrap = document.createElement("div");
+    headingWrap.className = "works-page__carousel-slide-caption-heading-wrap";
+
+    captionTextWrap.insertBefore(headingWrap, titleWrap);
+    headingWrap.appendChild(titleWrap);
+    if (yearWrap) headingWrap.appendChild(yearWrap);
+  }
+
   function createCaptionBlock(className, tagName, text) {
     var wrap = document.createElement("div");
     wrap.className = "works-page__carousel-slide-caption-" + className + "-wrap";
@@ -117,24 +198,17 @@
     var tagsWrap = document.createElement("div");
     tagsWrap.className = "works-page__carousel-slide-caption-tags";
 
-    roleString
-      .replace(/^Роль:\s*/i, "")
-      .split(",")
-      .map(function (tag) {
-        return tag.trim();
-      })
-      .filter(Boolean)
-      .forEach(function (tag) {
-        var tagWrap = document.createElement("div");
-        tagWrap.className = "works-page__carousel-slide-caption-tag-wrap";
+    expandRoleTags(roleString).forEach(function (tag) {
+      var tagWrap = document.createElement("div");
+      tagWrap.className = "works-page__carousel-slide-caption-tag-wrap";
 
-        var tagEl = document.createElement("span");
-        tagEl.className = "works-page__carousel-slide-caption-tag";
-        tagEl.textContent = tag;
+      var tagEl = document.createElement("span");
+      tagEl.className = "works-page__carousel-slide-caption-tag";
+      tagEl.textContent = tag;
 
-        tagWrap.appendChild(tagEl);
-        tagsWrap.appendChild(tagWrap);
-      });
+      tagWrap.appendChild(tagEl);
+      tagsWrap.appendChild(tagWrap);
+    });
 
     return tagsWrap;
   }
@@ -187,6 +261,7 @@
         captionTextWrap.appendChild(existingFullscreen);
       }
       ensureCaptionPreview(slide);
+      ensureCaptionHeading(captionTextWrap);
       primeCarouselImages(slide);
       bindSlidePointerActive(slide);
       bindSlideHoverRandom(slide);
@@ -214,8 +289,7 @@
     var captionTextWrap = document.createElement("div");
     captionTextWrap.className = "works-page__carousel-slide-caption-text-wrap";
 
-    captionTextWrap.appendChild(createCaptionBlock("title", "p", title));
-    if (year) captionTextWrap.appendChild(createCaptionBlock("year", "p", year));
+    captionTextWrap.appendChild(createCaptionHeading(title, year));
     if (role) captionTextWrap.appendChild(createRoleTags(role));
 
     var fullscreenBtn = document.createElement("button");
