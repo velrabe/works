@@ -21,7 +21,6 @@
 })();
 
 (function () {
-  var SLIDE_COUNT = 12;
   var WAGONS_IN_DOM = 3;
   var START_WAGON = 1;
   var TRANSITION_MS = 350;
@@ -349,9 +348,7 @@
     this.track = shell.querySelector("[data-carousel-viewport] [data-carousel-track]");
     this.templates = Array.from(
       this.track.querySelectorAll(".works-page__carousel-slide")
-    )
-      .slice(0, SLIDE_COUNT)
-      .map(function (slide) {
+    ).map(function (slide) {
         var template = slide.cloneNode(true);
         template.querySelectorAll(".works-page__carousel-img").forEach(function (img) {
           var src = img.getAttribute("src");
@@ -362,6 +359,8 @@
         });
         return template;
       });
+    this.slideCount = this.templates.length;
+    this.logicalIndex = 0;
     this.domIndex = 0;
     this.centerX = 0;
   }
@@ -370,7 +369,7 @@
     var order = [];
     var i;
 
-    for (i = 0; i < SLIDE_COUNT; i += 1) {
+    for (i = 0; i < this.slideCount; i += 1) {
       order.push(i);
     }
 
@@ -414,31 +413,31 @@
     this.track.insertBefore(frag, this.track.firstChild);
     initSlideCaptions(this.shell);
     primeCarouselImages(frag);
-    this.domIndex += SLIDE_COUNT;
+    this.domIndex += this.slideCount;
     this.applyTransform(false);
   };
 
   CarouselRow.prototype.removeFirstWagon = function () {
     var i;
 
-    for (i = 0; i < SLIDE_COUNT; i += 1) {
+    for (i = 0; i < this.slideCount; i += 1) {
       this.track.removeChild(this.track.firstElementChild);
     }
 
-    this.domIndex -= SLIDE_COUNT;
+    this.domIndex -= this.slideCount;
     this.applyTransform(false);
   };
 
   CarouselRow.prototype.removeLastWagon = function () {
     var i;
 
-    for (i = 0; i < SLIDE_COUNT; i += 1) {
+    for (i = 0; i < this.slideCount; i += 1) {
       this.track.removeChild(this.track.lastElementChild);
     }
   };
 
   CarouselRow.prototype.ensureWagonBuffer = function () {
-    while (this.track.children.length < SLIDE_COUNT * WAGONS_IN_DOM) {
+    while (this.track.children.length < this.slideCount * WAGONS_IN_DOM) {
       this.appendWagon();
     }
   };
@@ -491,32 +490,10 @@
   var pitch = new CarouselRow(pitchShell);
   var rows = [branding, pitch];
 
-  var PITCH_PAIR_OFFSET = SLIDE_COUNT * (2 * START_WAGON + 1) - 1;
-
-  function syncPitchPair() {
-    pitch.domIndex = PITCH_PAIR_OFFSET - branding.domIndex;
-  }
-
-  function applyPitchStep(delta) {
-    var targetPitch = pitch.domIndex - delta;
-
-    while (targetPitch < 0) {
-      pitch.prependWagon();
-      targetPitch += SLIDE_COUNT;
-    }
-
-    while (targetPitch >= pitch.track.children.length) {
-      pitch.appendWagon();
-    }
-
-    pitch.domIndex = targetPitch;
-  }
-
-  var logicalIndex = 0;
   var animating = false;
 
-  function applyRows(animate) {
-    rows.forEach(function (row) {
+  function applyRows(targetRows, animate) {
+    targetRows.forEach(function (row) {
       row.measure();
       row.applyTransform(animate);
       row.setActive();
@@ -526,89 +503,86 @@
   function initGallery() {
     rows.forEach(function (row) {
       row.buildWagons();
+      row.domIndex = row.slideCount * START_WAGON + row.logicalIndex;
     });
-    branding.domIndex = SLIDE_COUNT * START_WAGON + logicalIndex;
-    syncPitchPair();
     preloadCarouselTemplates(rows);
 
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
-        applyRows(false);
+        applyRows(rows, false);
       });
     });
   }
 
-  function waitRowsTransition(done) {
-    var pending = rows.length;
+  function waitRowsTransition(targetRows, done) {
+    var pending = targetRows.length;
 
     function onEnd(event) {
       if (event.propertyName !== "transform") return;
       pending -= 1;
       if (pending > 0) return;
 
-      rows.forEach(function (row) {
+      targetRows.forEach(function (row) {
         row.track.removeEventListener("transitionend", onEnd);
       });
       done();
     }
 
-    rows.forEach(function (row) {
+    targetRows.forEach(function (row) {
       row.track.addEventListener("transitionend", onEnd);
     });
   }
 
-  function recycleRows(delta, prepended) {
-    if (delta > 0 && branding.domIndex >= SLIDE_COUNT * (WAGONS_IN_DOM - 1)) {
-      branding.removeFirstWagon();
-      branding.appendWagon();
-      pitch.removeLastWagon();
-      pitch.prependWagon();
+  function recycleRow(row, delta, prepended) {
+    if (delta > 0 && row.domIndex >= row.slideCount * (WAGONS_IN_DOM - 1)) {
+      row.removeFirstWagon();
+      row.appendWagon();
     }
 
     if (prepended) {
-      branding.removeLastWagon();
-      pitch.removeFirstWagon();
-      pitch.appendWagon();
+      row.removeLastWagon();
     }
 
-    rows.forEach(function (row) {
-      row.ensureWagonBuffer();
-    });
-
-    syncPitchPair();
-
-    rows.forEach(function (row) {
-      row.measure();
-      row.applyTransform(false);
-      row.setActive();
-    });
+    row.ensureWagonBuffer();
+    row.measure();
+    row.applyTransform(false);
+    row.setActive();
   }
 
-  function step(delta) {
-    if (animating || !delta) return;
-    animating = true;
-
-    var targetDom = branding.domIndex + delta;
+  function prepareRowStep(row, delta) {
+    var targetDom = row.domIndex + delta;
     var prepended = delta < 0 && targetDom < 0;
 
     if (prepended) {
-      branding.prependWagon();
-      targetDom = branding.domIndex + delta;
+      row.prependWagon();
+      targetDom = row.domIndex + delta;
     }
 
-    if (delta > 0 && targetDom >= branding.track.children.length) {
-      branding.appendWagon();
+    if (delta > 0 && targetDom >= row.track.children.length) {
+      row.appendWagon();
     }
 
-    logicalIndex = (logicalIndex + delta + SLIDE_COUNT) % SLIDE_COUNT;
+    row.logicalIndex = (row.logicalIndex + delta + row.slideCount) % row.slideCount;
+    row.domIndex = targetDom;
 
-    branding.domIndex = targetDom;
-    applyPitchStep(delta);
+    return prepended;
+  }
 
-    applyRows(true);
+  function step(delta, activeRows) {
+    if (animating || !delta) return;
+    animating = true;
 
-    waitRowsTransition(function () {
-      recycleRows(delta, prepended);
+    var targets = activeRows || rows;
+    var prependedFlags = targets.map(function (row) {
+      return prepareRowStep(row, delta);
+    });
+
+    applyRows(targets, true);
+
+    waitRowsTransition(targets, function () {
+      targets.forEach(function (row, index) {
+        recycleRow(row, delta, prependedFlags[index]);
+      });
       animating = false;
     });
   }
@@ -618,7 +592,7 @@
   if (typeof ResizeObserver !== "undefined") {
     var resizeObserver = new ResizeObserver(function () {
       if (animating) return;
-      applyRows(false);
+      applyRows(rows, false);
     });
     rows.forEach(function (row) {
       resizeObserver.observe(row.viewport);
@@ -626,7 +600,7 @@
   } else {
     window.addEventListener("resize", function () {
       if (animating) return;
-      applyRows(false);
+      applyRows(rows, false);
     });
   }
 
@@ -661,10 +635,12 @@
       return "branding";
     }
 
+    function getActiveDragRows() {
+      return dragRow === "pitch" ? [pitch] : [branding];
+    }
+
     function applyDragTransforms(delta) {
       if (dragRow === "pitch") {
-        branding.track.style.transform =
-          "translate3d(" + (baseBrandingX - delta) + "px, 0, 0)";
         pitch.track.style.transform =
           "translate3d(" + (basePitchX + delta) + "px, 0, 0)";
         return;
@@ -672,16 +648,10 @@
 
       branding.track.style.transform =
         "translate3d(" + (baseBrandingX + delta) + "px, 0, 0)";
-      pitch.track.style.transform =
-        "translate3d(" + (basePitchX - delta) + "px, 0, 0)";
     }
 
     function dragStepDelta(delta) {
-      var stepDelta = delta > 0 ? -1 : 1;
-      if (dragRow === "pitch") {
-        stepDelta = -stepDelta;
-      }
-      return stepDelta;
+      return delta > 0 ? -1 : 1;
     }
 
     function onPointerDown(event) {
@@ -696,6 +666,9 @@
       pitch.measure();
       baseBrandingX = branding.getTranslateX();
       basePitchX = pitch.getTranslateX();
+      getActiveDragRows().forEach(function (row) {
+        row.track.style.transition = "none";
+      });
       surface.classList.add("is-dragging");
       surface.setPointerCapture(event.pointerId);
     }
@@ -704,8 +677,9 @@
       if (!dragging) return;
 
       deltaX = event.clientX - startX;
-      branding.track.style.transition = "none";
-      pitch.track.style.transition = "none";
+      getActiveDragRows().forEach(function (row) {
+        row.track.style.transition = "none";
+      });
       applyDragTransforms(deltaX);
     }
 
@@ -720,11 +694,11 @@
       }
 
       if (Math.abs(deltaX) >= DRAG_THRESHOLD) {
-        step(dragStepDelta(deltaX));
+        step(dragStepDelta(deltaX), getActiveDragRows());
         return;
       }
 
-      applyRows(true);
+      applyRows(getActiveDragRows(), true);
     }
 
     surface.addEventListener("pointerdown", onPointerDown);
