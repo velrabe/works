@@ -370,10 +370,20 @@ body {
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev {
   left: 0;
+  margin-left: 0.25rem;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next {
   right: 0;
+  margin-right: 0.25rem;
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control--prev:hover {
+  padding-right: 0.25rem;
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control--next:hover {
+  padding-left: 0.25rem;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control::after {
@@ -389,11 +399,11 @@ body {
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev::after {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next::after {
-  background-image: linear-gradient(to left, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+  background-image: linear-gradient(to left, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control:hover::after {
