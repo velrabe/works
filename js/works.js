@@ -276,23 +276,8 @@
 
   var PITCH_PAIR_OFFSET = SLIDE_COUNT * (2 * START_WAGON + 1) - 1;
 
-  function pitchDomForLogical(logical) {
-    return SLIDE_COUNT * START_WAGON + (SLIDE_COUNT - 1 - logical);
-  }
-
-  function pitchDomForBranding(brandingDom, logical) {
-    var middleStart = SLIDE_COUNT * START_WAGON;
-    var middleEnd = middleStart + SLIDE_COUNT - 1;
-
-    if (brandingDom >= middleStart && brandingDom <= middleEnd) {
-      return PITCH_PAIR_OFFSET - brandingDom;
-    }
-
-    return pitchDomForLogical(logical);
-  }
-
   function syncPitchPair() {
-    pitch.domIndex = pitchDomForBranding(branding.domIndex, logicalIndex);
+    pitch.domIndex = PITCH_PAIR_OFFSET - branding.domIndex;
   }
 
   var logicalIndex = 0;
