@@ -81,62 +81,51 @@
     spaceBetween: 12,
     slideToClickedSlide: false,
     watchSlidesProgress: true,
+    loopAdditionalSlides: 2,
   };
 
-  var brandingSwiper = new Swiper(brandingEl, sharedOptions);
-  var pitchSwiper = new Swiper(pitchEl, sharedOptions);
+  var brandingSwiper = new Swiper(brandingEl, Object.assign({}, sharedOptions, {
+    loopedSlides: brandingCount,
+  }));
+
+  var pitchSwiper = new Swiper(pitchEl, Object.assign({}, sharedOptions, {
+    loopedSlides: pitchCount,
+    allowTouchMove: false,
+  }));
 
   function mirroredPitchIndex(brandingIndex) {
     return (pitchCount - 1 - brandingIndex + pitchCount) % pitchCount;
   }
 
-  function mirroredBrandingIndex(pitchIndex) {
-    return (pitchCount - 1 - pitchIndex + brandingCount) % brandingCount;
-  }
-
-  function goToBrandingIndex(index) {
-    var normalized =
-      ((index % brandingCount) + brandingCount) % brandingCount;
-    syncing = true;
-    brandingSwiper.slideToLoop(normalized, GALLERY_SPEED, false);
-    pitchSwiper.slideToLoop(mirroredPitchIndex(normalized), GALLERY_SPEED, false);
-    syncing = false;
-  }
-
-  brandingSwiper.slideToLoop(0, 0, false);
-  pitchSwiper.slideToLoop(mirroredPitchIndex(0), 0, false);
-
-  brandingSwiper.on("slideChange", function () {
-    if (syncing) return;
-    syncing = true;
+  function syncPitchToBranding(speed) {
     pitchSwiper.slideToLoop(
       mirroredPitchIndex(brandingSwiper.realIndex),
-      GALLERY_SPEED,
+      speed === undefined ? GALLERY_SPEED : speed,
       false
     );
-    syncing = false;
-  });
+  }
 
-  pitchSwiper.on("slideChange", function () {
+  syncing = true;
+  brandingSwiper.slideToLoop(0, 0, false);
+  pitchSwiper.slideToLoop(mirroredPitchIndex(0), 0, false);
+  syncing = false;
+
+  brandingSwiper.on("slideChangeTransitionEnd", function () {
     if (syncing) return;
     syncing = true;
-    brandingSwiper.slideToLoop(
-      mirroredBrandingIndex(pitchSwiper.realIndex),
-      GALLERY_SPEED,
-      false
-    );
+    syncPitchToBranding(GALLERY_SPEED);
     syncing = false;
   });
 
   if (prevBtn) {
     prevBtn.addEventListener("click", function () {
-      goToBrandingIndex(brandingSwiper.realIndex - 1);
+      brandingSwiper.slidePrev();
     });
   }
 
   if (nextBtn) {
     nextBtn.addEventListener("click", function () {
-      goToBrandingIndex(brandingSwiper.realIndex + 1);
+      brandingSwiper.slideNext();
     });
   }
 })();
