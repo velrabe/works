@@ -14,8 +14,9 @@
   --works-section: clamp(3rem, 8vw, 5rem);
   --works-font: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  --works-carousel-slide-ratio: 0.78;
+  --works-carousel-slide-height: min(48vh, 22rem);
   --works-carousel-gap: 0.75rem;
+  --works-carousel-nav-size: clamp(2.5rem, 6vw, 5rem);
   --works-telegram: #27a7e7;
 }
 
@@ -323,7 +324,7 @@ body {
 .works-page__showcase-gallery-frame {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
 }
 
@@ -333,20 +334,43 @@ body {
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
+  border-radius: var(--works-radius-sm);
+  overflow: hidden;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control {
-  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  width: 0;
+  min-width: var(--works-carousel-nav-size);
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  height: auto;
+  cursor: pointer;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  transition: opacity 0.2s ease;
+}
+
+.works-page__showcase-gallery-frame > .works-page__carousel-control:hover {
+  opacity: 0.65;
+  border-color: transparent;
+  background-color: transparent;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--prev {
-  margin-left: 0;
-  margin-right: 0.5rem;
+  margin-right: 0;
 }
 
 .works-page__showcase-gallery-frame > .works-page__carousel-control--next {
-  margin-left: 0.5rem;
-  margin-right: 0;
+  margin-left: 0;
 }
 
 .works-page__showcase-gallery .works-page__showcase--pitch {
@@ -453,8 +477,8 @@ body {
 .works-page__carousel-slide {
   display: flex;
   flex-direction: column;
-  flex: 0 0 calc(var(--works-carousel-slide-ratio) * 100cqw);
-  width: calc(var(--works-carousel-slide-ratio) * 100cqw);
+  flex: 0 0 calc(var(--works-carousel-slide-height) * 16 / 9);
+  width: calc(var(--works-carousel-slide-height) * 16 / 9);
   border: 0.0625rem solid var(--works-border);
   border-radius: var(--works-radius-sm);
   overflow: hidden;
@@ -471,7 +495,8 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: min(48vh, 22rem);
+  height: var(--works-carousel-slide-height);
+  aspect-ratio: 16 / 9;
   overflow: hidden;
 }
 
@@ -1974,15 +1999,20 @@ html.works-modal-open {
     display: none;
   }
 
+  .works-page__showcase-gallery-frame > .works-page__carousel-control {
+    min-width: 2.5rem;
+  }
+
   .works-page__carousel-slide {
-    flex: 0 0 100cqw;
-    width: 100cqw;
+    flex: 0 0 100%;
+    width: 100%;
     border-radius: 0;
     border-left: 0;
     border-right: 0;
   }
 
   .works-page__carousel-slide-inner {
+    width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;
   }

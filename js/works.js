@@ -192,13 +192,16 @@
   var pitch = new CarouselRow(pitchShell);
   var rows = [branding, pitch];
 
+  var PITCH_PAIR_OFFSET = SLIDE_COUNT * (2 * START_WAGON + 1) - 1;
+
   function pitchDomForLogical(logical) {
     return SLIDE_COUNT * START_WAGON + (SLIDE_COUNT - 1 - logical);
   }
 
-  function syncPitchDom() {
-    pitch.domIndex = pitchDomForLogical(logicalIndex);
+  function syncPitchDomFromBranding() {
+    pitch.domIndex = PITCH_PAIR_OFFSET - branding.domIndex;
   }
+
   var logicalIndex = 0;
   var animating = false;
 
@@ -215,7 +218,7 @@
       row.buildWagons();
     });
     branding.domIndex = SLIDE_COUNT * START_WAGON + logicalIndex;
-    syncPitchDom();
+    syncPitchDomFromBranding();
 
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
@@ -245,22 +248,24 @@
 
   function recycleRows(delta, prepended) {
     if (delta > 0 && branding.domIndex >= SLIDE_COUNT * (WAGONS_IN_DOM - 1)) {
-      rows.forEach(function (row) {
-        row.removeFirstWagon();
-        row.appendWagon();
-      });
+      branding.removeFirstWagon();
+      branding.appendWagon();
+      pitch.removeLastWagon();
+      pitch.prependWagon();
     }
 
     if (prepended) {
-      rows.forEach(function (row) {
-        row.removeLastWagon();
-      });
+      branding.removeLastWagon();
+      pitch.removeFirstWagon();
+      pitch.appendWagon();
     }
 
     rows.forEach(function (row) {
       row.ensureWagonBuffer();
     });
-    syncPitchDom();
+
+    syncPitchDomFromBranding();
+
     rows.forEach(function (row) {
       row.measure();
       row.applyTransform(false);
@@ -294,7 +299,12 @@
     logicalIndex = (logicalIndex + delta + SLIDE_COUNT) % SLIDE_COUNT;
 
     branding.domIndex = targetDom;
-    syncPitchDom();
+
+    if (delta > 0) {
+      pitch.domIndex -= 1;
+    } else {
+      pitch.domIndex = pitchDomForLogical(logicalIndex);
+    }
 
     applyRows(true);
 
