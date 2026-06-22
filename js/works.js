@@ -1270,6 +1270,50 @@
 })();
 
 (function () {
+  var copyEmailBtn = document.querySelector("[data-copy-email]");
+  if (!copyEmailBtn) return;
+
+  var copiedTimer = null;
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+
+    var field = document.createElement("textarea");
+    field.value = text;
+    field.setAttribute("readonly", "");
+    field.style.position = "fixed";
+    field.style.top = "-9999px";
+    field.style.left = "-9999px";
+    document.body.appendChild(field);
+    field.select();
+
+    try {
+      document.execCommand("copy");
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(err);
+    } finally {
+      document.body.removeChild(field);
+    }
+  }
+
+  copyEmailBtn.addEventListener("click", function () {
+    var email = copyEmailBtn.getAttribute("data-copy-email");
+    if (!email) return;
+
+    copyText(email).then(function () {
+      copyEmailBtn.setAttribute("data-copied", "true");
+      clearTimeout(copiedTimer);
+      copiedTimer = setTimeout(function () {
+        copyEmailBtn.removeAttribute("data-copied");
+      }, 1600);
+    });
+  });
+})();
+
+(function () {
   var icon = document.querySelector("[data-fab-icon]");
   if (!icon) return;
 

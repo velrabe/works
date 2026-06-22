@@ -2060,6 +2060,7 @@ html.works-modal-open {
 }
 
 .works-page__footer-link {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -2086,6 +2087,34 @@ html.works-modal-open {
 
 .works-page__footer-link:hover {
   border-bottom-color: var(--works-border-strong);
+}
+
+.works-page__footer-copy-link {
+  gap: 0.5rem;
+}
+
+.works-page__copy-tooltip {
+  display: inline-flex;
+  align-items: center;
+  border: 0.0625rem solid var(--works-border);
+  border-radius: 999rem;
+  background-color: rgba(20, 20, 20, 0.92);
+  color: #fff;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.125rem;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-0.25rem, 0, 0);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
+}
+
+.works-page__footer-copy-link[data-copied="true"] .works-page__copy-tooltip {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 .works-page__footer-link-label-wrap {
