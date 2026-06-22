@@ -24,6 +24,7 @@
   var WAGONS_IN_DOM = 3;
   var START_WAGON = 1;
   var TRANSITION_MS = 350;
+  var DEACTIVATION_MS = 440;
   var MOBILE_GALLERY_QUERY = "(max-width: 47.9375rem)";
   var mobileGalleryMedia = window.matchMedia
     ? window.matchMedia(MOBILE_GALLERY_QUERY)
@@ -45,6 +46,12 @@
     imgs.forEach(function (img) {
       var src = img.getAttribute("data-carousel-src") || img.getAttribute("src");
       if (!src) return;
+
+      var slide = img.closest(".works-page__carousel-slide");
+      if (slide) {
+        var slideImageUrl = new URL(src, window.location.href).href;
+        slide.style.setProperty("--carousel-slide-image", "url('" + slideImageUrl.replace(/'/g, "\\'") + "')");
+      }
 
       img.loading = "eager";
       img.decoding = "async";
@@ -397,7 +404,7 @@
     var slide = template.cloneNode(true);
     slide.dataset.galleryIndex =
       template.dataset.galleryIndex || String(templateIndex);
-    slide.classList.remove("is-active");
+    slide.classList.remove("is-active", "is-activating", "is-deactivating");
     delete slide.dataset.hoverBound;
     primeCarouselImages(slide);
     return slide;
@@ -515,7 +522,31 @@
   CarouselRow.prototype.setActive = function () {
     var active = this.domIndex;
     Array.prototype.forEach.call(this.track.children, function (slide, index) {
-      slide.classList.toggle("is-active", index === active);
+      var wasActive = slide.classList.contains("is-active");
+      var isActive = index === active;
+
+      slide.classList.toggle("is-active", isActive);
+
+      if (!isActive) {
+        slide.classList.remove("is-activating");
+        if (wasActive && !isMobileGallery()) {
+          slide.classList.add("is-deactivating");
+          window.setTimeout(function () {
+            slide.classList.remove("is-deactivating");
+          }, DEACTIVATION_MS);
+        } else {
+          slide.classList.remove("is-deactivating");
+        }
+        return;
+      }
+
+      slide.classList.remove("is-deactivating");
+
+      if (!wasActive && !isMobileGallery()) {
+        slide.classList.remove("is-activating");
+        void slide.offsetWidth;
+        slide.classList.add("is-activating");
+      }
     });
   };
 
