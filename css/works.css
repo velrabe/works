@@ -644,9 +644,9 @@ body {
   transform: scale(1) translate(0, 0) rotate(0deg);
   transform-origin: center center;
   transition:
-    filter 0.6s ease-in-out,
-    transform 0.6s ease-in-out,
-    opacity 0.6s ease-in-out;
+    filter var(--works-carousel-cover-hover-duration, 0.68s) var(--works-carousel-cover-hover-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform var(--works-carousel-cover-hover-duration, 0.68s) var(--works-carousel-cover-hover-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    opacity var(--works-carousel-cover-hover-duration, 0.68s) var(--works-carousel-cover-hover-ease, cubic-bezier(0.22, 1, 0.36, 1));
   transition-delay: 0s;
 }
 
@@ -660,16 +660,12 @@ body {
 
 .works-page__carousel-slide:hover .works-page__carousel-img,
 .works-page__carousel-slide.is-pointer-active .works-page__carousel-img {
-  filter: blur(250px);
-  opacity: 0.2;
+  filter: blur(var(--works-carousel-cover-hover-blur, 11rem));
+  opacity: var(--works-carousel-cover-hover-opacity, 0.2);
   transform:
-    scale(1.1)
+    scale(var(--works-carousel-cover-hover-scale, 1.16))
     translate(var(--slide-hover-x, 0), var(--slide-hover-y, 0))
     rotate(var(--slide-hover-rotate, 0deg));
-  transition:
-    filter 0.6s ease-in-out,
-    transform 0.6s ease-in-out,
-    opacity 0.6s ease-in-out;
 }
 
 .works-page__carousel-slide-caption-wrap {
@@ -685,7 +681,7 @@ body {
   min-height: 0;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s ease-in-out;
+  transition: opacity var(--works-carousel-cover-hover-duration, 0.68s) var(--works-carousel-cover-hover-ease, cubic-bezier(0.22, 1, 0.36, 1));
   transition-delay: 0s;
 }
 
@@ -700,6 +696,11 @@ body {
     --works-gallery-y-padding: clamp(3.5rem, 7vh, 6rem);
     --works-gallery-y-padding-total: clamp(7rem, 14vh, 12rem);
     --works-carousel-inactive-blur: 0.72rem;
+    --works-carousel-cover-hover-blur: clamp(8rem, 12vw, 13rem);
+    --works-carousel-cover-hover-duration: 0.68s;
+    --works-carousel-cover-hover-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --works-carousel-cover-hover-opacity: 0.18;
+    --works-carousel-cover-hover-scale: 1.18;
     min-height: 100vh;
     justify-content: center;
     padding-top: var(--works-gallery-y-padding);
@@ -807,6 +808,16 @@ body {
   .works-page__carousel-slide:not(.is-active) .works-page__carousel-img {
     filter: saturate(1.35) brightness(1.2) contrast(0.82);
     opacity: 0.9;
+  }
+
+  .works-page__carousel-slide:hover .works-page__carousel-img,
+  .works-page__carousel-slide.is-pointer-active .works-page__carousel-img {
+    filter: blur(var(--works-carousel-cover-hover-blur));
+    opacity: var(--works-carousel-cover-hover-opacity);
+    transform:
+      scale(var(--works-carousel-cover-hover-scale))
+      translate(var(--slide-hover-x, 0), var(--slide-hover-y, 0))
+      rotate(var(--slide-hover-rotate, 0deg));
   }
 
   .works-page__carousel-slide::after {
