@@ -555,7 +555,6 @@
         }
       });
 
-    nextSlide.classList.add("is-active");
     nextSlide.classList.remove("is-deactivating");
     window.clearTimeout(nextSlide.worksCarouselDeactivateTimer);
 
@@ -563,11 +562,12 @@
       nextSlide.classList.remove("is-activating");
       window.clearTimeout(nextSlide.worksCarouselActivateTimer);
       void nextSlide.offsetWidth;
-      nextSlide.classList.add("is-activating");
+      nextSlide.classList.add("is-active", "is-activating");
       nextSlide.worksCarouselActivateTimer = window.setTimeout(function () {
         nextSlide.classList.remove("is-activating");
       }, ACTIVATION_MS);
     } else {
+      nextSlide.classList.add("is-active");
       nextSlide.classList.remove("is-activating");
       window.clearTimeout(nextSlide.worksCarouselActivateTimer);
     }
