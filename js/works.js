@@ -1930,6 +1930,54 @@
 })();
 
 (function () {
+  var anchorButtons = document.querySelectorAll("[data-copy-anchor]");
+  if (!anchorButtons.length) return;
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+
+    var field = document.createElement("textarea");
+    field.value = text;
+    field.setAttribute("readonly", "");
+    field.style.position = "fixed";
+    field.style.top = "-9999px";
+    field.style.left = "-9999px";
+    document.body.appendChild(field);
+    field.select();
+
+    try {
+      document.execCommand("copy");
+      return Promise.resolve();
+    } catch (err) {
+      return Promise.reject(err);
+    } finally {
+      document.body.removeChild(field);
+    }
+  }
+
+  anchorButtons.forEach(function (button) {
+    var copiedTimer = null;
+
+    button.addEventListener("click", function () {
+      var anchor = button.getAttribute("data-copy-anchor");
+      if (!anchor) return;
+
+      var url = window.location.href.split("#")[0] + "#" + anchor;
+
+      copyText(url).then(function () {
+        button.setAttribute("data-copied", "true");
+        clearTimeout(copiedTimer);
+        copiedTimer = setTimeout(function () {
+          button.removeAttribute("data-copied");
+        }, 1600);
+      });
+    });
+  });
+})();
+
+(function () {
   var icon = document.querySelector("[data-fab-icon]");
   if (!icon) return;
 
